@@ -5,9 +5,23 @@ import { createEventSchema } from '@/lib/validation'
 
 export async function GET(request: NextRequest) {
   try {
+    console.log('[GET /api/events] Request received')
     const session = await appClient.getSession()
-    if (!session?.user?.org_id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    
+    console.log('[GET /api/events] Session:', {
+      hasUser: !!session?.user,
+      email: session?.user?.email,
+      orgId: session?.user?.org_id
+    })
+    
+    if (!session?.user) {
+      console.log('[GET /api/events] No session user, returning 401')
+      return NextResponse.json({ error: 'Unauthorized - No session' }, { status: 401 })
+    }
+
+    if (!session.user.org_id) {
+      console.log('[GET /api/events] No org_id in session, returning 401')
+      return NextResponse.json({ error: 'Unauthorized - No organization' }, { status: 401 })
     }
 
     // Get organization from Auth0 org_id
@@ -25,13 +39,18 @@ export async function GET(request: NextRequest) {
     })
 
     if (!organization) {
+      console.log('[GET /api/events] Organization not found for org_id:', session.user.org_id)
       return NextResponse.json({ error: 'Organization not found' }, { status: 404 })
     }
 
+    console.log(`[GET /api/events] Found ${organization.events.length} events`)
     return NextResponse.json(organization.events)
   } catch (error) {
-    console.error('Error fetching events:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    console.error('[GET /api/events] Error fetching events:', error)
+    return NextResponse.json({ 
+      error: 'Internal server error',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    }, { status: 500 })
   }
 }
 
