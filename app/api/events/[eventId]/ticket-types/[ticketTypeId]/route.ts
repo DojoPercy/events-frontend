@@ -5,7 +5,7 @@ import { updateTicketTypeSchema } from '@/lib/validation'
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { eventId: string; ticketTypeId: string } }
+  { params }: { params: Promise<{ eventId: string; ticketTypeId: string }> }
 ) {
   try {
     const session = await appClient.getSession()
@@ -16,11 +16,14 @@ export async function PUT(
     const body = await request.json()
     const validatedData = updateTicketTypeSchema.parse(body)
 
+    const { eventId, ticketTypeId } = await params
+
     // Check if ticket type belongs to user's organization
     const ticketType = await prisma.ticketType.findFirst({
       where: {
-        id: params.ticketTypeId,
+        id: ticketTypeId,
         event: {
+          id: eventId,
           organization: {
             auth0OrgId: session.user.org_id
           }
@@ -33,7 +36,7 @@ export async function PUT(
     }
 
     const updatedTicketType = await prisma.ticketType.update({
-      where: { id: params.ticketTypeId },
+      where: { id: ticketTypeId },
       data: validatedData
     })
 
@@ -49,7 +52,7 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { eventId: string; ticketTypeId: string } }
+  { params }: { params: Promise<{ eventId: string; ticketTypeId: string }> }
 ) {
   try {
     const session = await appClient.getSession()
@@ -57,11 +60,14 @@ export async function DELETE(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    const { eventId, ticketTypeId } = await params
+
     // Check if ticket type belongs to user's organization
     const ticketType = await prisma.ticketType.findFirst({
       where: {
-        id: params.ticketTypeId,
+        id: ticketTypeId,
         event: {
+          id: eventId,
           organization: {
             auth0OrgId: session.user.org_id
           }
@@ -74,7 +80,7 @@ export async function DELETE(
     }
 
     await prisma.ticketType.delete({
-      where: { id: params.ticketTypeId }
+      where: { id: ticketTypeId }
     })
 
     return NextResponse.json({ success: true })

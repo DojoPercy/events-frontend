@@ -5,7 +5,7 @@ import { createTicketTypeSchema, updateTicketTypeSchema } from '@/lib/validation
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { eventId: string } }
+  { params }: { params: Promise<{ eventId: string }> }
 ) {
   try {
     const session = await appClient.getSession()
@@ -16,10 +16,12 @@ export async function POST(
     const body = await request.json()
     const validatedData = createTicketTypeSchema.parse(body)
 
+    const { eventId } = await params
+
     // Check if event belongs to user's organization
     const event = await prisma.event.findFirst({
       where: {
-        id: params.eventId,
+        id: eventId,
         organization: {
           auth0OrgId: session.user.org_id
         }
@@ -33,7 +35,7 @@ export async function POST(
     const ticketType = await prisma.ticketType.create({
       data: {
         ...validatedData,
-        eventId: params.eventId,
+        eventId: eventId,
       }
     })
 

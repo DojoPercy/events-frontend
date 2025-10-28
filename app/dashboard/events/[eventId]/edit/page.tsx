@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, useParams } from "next/navigation"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { CalendarIcon, MapPinIcon, PlusIcon, TrashIcon, SaveIcon } from "lucide-react"
@@ -35,8 +35,9 @@ interface Event {
   }>
 }
 
-export default function EditEventPage({ params }: { params: { eventId: string } }) {
+export default function EditEventPage() {
   const router = useRouter()
+  const { eventId } = useParams<{ eventId: string }>()
   const [event, setEvent] = useState<Event | null>(null)
   const [loading, setLoading] = useState(true)
   const [newTicketTypes, setNewTicketTypes] = useState<CreateTicketTypeInput[]>([])
@@ -56,8 +57,9 @@ export default function EditEventPage({ params }: { params: { eventId: string } 
 
   useEffect(() => {
     const fetchEvent = async () => {
+      if (!eventId) return
       try {
-        const response = await fetch(`/api/events/${params.eventId}`)
+        const response = await fetch(`/api/events/${eventId}`)
         if (!response.ok) {
           throw new Error('Event not found')
         }
@@ -85,7 +87,7 @@ export default function EditEventPage({ params }: { params: { eventId: string } 
     }
 
     fetchEvent()
-  }, [params.eventId, reset, router])
+  }, [eventId, reset, router])
 
   const addTicketType = () => {
     setNewTicketTypes([...newTicketTypes, { name: "", description: "", price: 0, quantity: 0 }])
@@ -103,7 +105,7 @@ export default function EditEventPage({ params }: { params: { eventId: string } 
 
   const onSubmit = async (data: UpdateEventInput) => {
     try {
-      const response = await fetch(`/api/events/${params.eventId}`, {
+      const response = await fetch(`/api/events/${eventId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -129,7 +131,7 @@ export default function EditEventPage({ params }: { params: { eventId: string } 
     }
 
     try {
-      const response = await fetch(`/api/events/${params.eventId}`, {
+      const response = await fetch(`/api/events/${eventId}`, {
         method: 'DELETE',
       })
 
