@@ -4,6 +4,7 @@ import { redirect } from "next/navigation"
 import slugify from "@sindresorhus/slugify"
 
 import { managementClient, onboardingClient } from "@/lib/auth0"
+import { prisma } from "@/lib/prisma"
 
 export async function createOrganization(prevState: any, formData: FormData) {
   const session = await onboardingClient.getSession()
@@ -51,6 +52,15 @@ export async function createOrganization(prevState: any, formData: FormData) {
         roles: [process.env.AUTH0_ADMIN_ROLE_ID!],
       }
     )
+
+    // Create organization in database
+    await prisma.organization.create({
+      data: {
+        auth0OrgId: organization.id,
+        name: organizationName,
+      }
+    })
+    console.log(`[CREATE ORG] Created organization in database: ${organizationName} (${organization.id})`)
   } catch (error) {
     console.error("failed to create an organization", error)
     return {

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { appClient } from '@/lib/auth0'
+import { appClient, managementClient } from '@/lib/auth0'
 import { prisma } from '@/lib/prisma'
 
 export async function POST(request: NextRequest) {
@@ -17,12 +17,25 @@ export async function POST(request: NextRequest) {
     })
 
     if (!organization) {
+      // Fetch organization name from Auth0
+      let orgName = 'My Organization'
+      try {
+        const { data: auth0Org } = await managementClient.organizations.get({
+          id: session.user.org_id
+        })
+        orgName = auth0Org.display_name || auth0Org.name || orgName
+        console.log(`[DRAFT EVENT] Fetched organization name from Auth0: ${orgName}`)
+      } catch (error) {
+        console.error('[DRAFT EVENT] Failed to fetch org from Auth0:', error)
+      }
+
       organization = await prisma.organization.create({
         data: {
           auth0OrgId: session.user.org_id,
-          name: session.user.org_name || 'Unknown Organization'
+          name: orgName
         }
       })
+      console.log(`[DRAFT EVENT] Created organization in DB: ${orgName}`)
     }
 
     const { ticketTypes, ...eventData } = body

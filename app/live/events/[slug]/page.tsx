@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { CalendarIcon, MapPinIcon, LinkedinIcon, TwitterIcon, InstagramIcon } from "lucide-react"
+import { CalendarIcon, MapPinIcon, LinkedinIcon, TwitterIcon, InstagramIcon, GlobeIcon, MenuIcon, XIcon } from "lucide-react"
 import { format } from "date-fns"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -66,6 +66,7 @@ export default function EventDetailPage({ params }: { params: Promise<{ slug: st
   const [event, setEvent] = useState<Event | null>(null)
   const [loading, setLoading] = useState(true)
   const [countdown, setCountdown] = useState<Countdown>({ days: 0, hours: 0, minutes: 0, seconds: 0 })
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   useEffect(() => {
     const fetchEvent = async () => {
@@ -133,7 +134,7 @@ export default function EventDetailPage({ params }: { params: Promise<{ slug: st
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div>Loading...</div>
+        <div className="animate-pulse">Loading event...</div>
       </div>
     )
   }
@@ -154,53 +155,92 @@ export default function EventDetailPage({ params }: { params: Promise<{ slug: st
       
       {/* Navigation */}
       <header className="fixed top-0 w-full z-50 bg-white/95 backdrop-blur border-b">
-        <div className="container mx-auto px-6 py-4">
+        <div className="container mx-auto px-4 sm:px-6 py-3 sm:py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               {event.logoUrl ? (
                 <img 
                   src={event.logoUrl} 
                   alt="Event Logo" 
-                  className="h-12 object-contain"
+                  className="h-8 sm:h-12 object-contain"
                   onError={(e) => {
                     console.error('[EVENT PAGE] Logo failed to load:', event.logoUrl)
                     e.currentTarget.style.display = 'none'
                   }}
                 />
               ) : (
-                <div className="h-12 flex items-center">
-                  <span className="font-bold text-xl" style={{ color: primaryColor }}>
+                <div className="h-8 sm:h-12 flex items-center">
+                  <span className="font-bold text-lg sm:text-xl" style={{ color: primaryColor }}>
                     {event.title}
                   </span>
                 </div>
               )}
             </div>
-            <nav className="flex items-center space-x-6">
-              <a href="#about" className="hover:text-gray-600">About</a>
-              <a href="#tickets" className="hover:text-gray-600">Tickets</a>
-              <a href="#venue" className="hover:text-gray-600">Venue</a>
+            
+            {/* Desktop Navigation */}
+            <nav className="hidden md:flex items-center space-x-6">
+              <a href="#about" className="hover:text-gray-600 transition-colors">About</a>
+              <a href="#tickets" className="hover:text-gray-600 transition-colors">Tickets</a>
+              <a href="#venue" className="hover:text-gray-600 transition-colors">Venue</a>
             </nav>
+
+            {/* Mobile Menu Button */}
+            <button
+              className="md:hidden p-2"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            >
+              {mobileMenuOpen ? <XIcon className="h-6 w-6" /> : <MenuIcon className="h-6 w-6" />}
+            </button>
           </div>
+
+          {/* Mobile Menu */}
+          {mobileMenuOpen && (
+            <nav className="md:hidden mt-4 pb-4 flex flex-col space-y-3 border-t pt-4">
+              <a 
+                href="#about" 
+                className="hover:text-gray-600 transition-colors"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                About
+              </a>
+              <a 
+                href="#tickets" 
+                className="hover:text-gray-600 transition-colors"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Tickets
+              </a>
+              <a 
+                href="#venue" 
+                className="hover:text-gray-600 transition-colors"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Venue
+              </a>
+            </nav>
+          )}
         </div>
       </header>
 
       {/* Hero Section with Background */}
       <section 
-        className="relative h-screen flex items-center justify-center text-white"
+        className="relative min-h-screen flex items-center justify-center text-white pt-16 sm:pt-0"
         style={{
-          backgroundImage: `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url(${event.coverImageUrl})`,
+          backgroundImage: event.coverImageUrl 
+            ? `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url(${event.coverImageUrl})`
+            : `linear-gradient(135deg, ${primaryColor} 0%, ${primaryColor}dd 100%)`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
         }}
       >
-        <div className="container mx-auto px-6 text-center space-y-8">
+        <div className="container mx-auto px-4 sm:px-6 text-center space-y-6 sm:space-y-8 py-12 sm:py-0">
           {/* Logo */}
           {event.logoUrl && (
             <div className="mb-4">
               <img 
                 src={event.logoUrl} 
                 alt="Event Logo" 
-                className="h-32 mx-auto object-contain"
+                className="h-24 sm:h-32 mx-auto object-contain"
                 onError={(e) => {
                   console.error('[EVENT PAGE] Hero logo failed to load:', event.logoUrl)
                   e.currentTarget.style.display = 'none'
@@ -210,195 +250,309 @@ export default function EventDetailPage({ params }: { params: Promise<{ slug: st
           )}
 
           {/* Event Details */}
-          <div className="flex items-center justify-center space-x-6 text-lg">
+          <div className="flex flex-col sm:flex-row items-center justify-center sm:space-x-6 space-y-3 sm:space-y-0 text-base sm:text-lg">
             <div className="flex items-center">
-              <CalendarIcon className="mr-2 h-5 w-5" />
-              {format(new Date(event.eventDate), "MMMM d, yyyy")}
+              <CalendarIcon className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
+              <span>{format(new Date(event.eventDate), 'MMMM dd, yyyy')}</span>
             </div>
-            <div className="flex items-center">
-              <MapPinIcon className="mr-2 h-5 w-5" />
-              {event.venue || event.location}
-            </div>
+            {event.location && (
+              <div className="flex items-center">
+                <MapPinIcon className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
+                <span>{event.location}</span>
+              </div>
+            )}
           </div>
 
-          {/* Hero Title */}
-          <h1 className="text-5xl md:text-7xl font-bold">
+          {/* Title */}
+          <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold leading-tight px-4">
             {event.heroTitle || event.title}
           </h1>
+
+          {/* Subtitle */}
           {event.heroSubtitle && (
-            <p className="text-2xl text-gray-300">
+            <p className="text-lg sm:text-xl md:text-2xl max-w-3xl mx-auto px-4">
               {event.heroSubtitle}
             </p>
           )}
 
-          {/* Countdown Timer */}
-          <div className="flex items-center justify-center space-x-4 mt-12">
-            <CountdownBox label="Days" value={countdown.days} primaryColor={primaryColor} />
-            <CountdownBox label="Hours" value={countdown.hours} primaryColor={primaryColor} />
-            <CountdownBox label="Minutes" value={countdown.minutes} primaryColor={primaryColor} />
-            <CountdownBox label="Seconds" value={countdown.seconds} primaryColor={primaryColor} />
-          </div>
+          {/* Countdown */}
+          {countdown.days > 0 && (
+            <div className="grid grid-cols-4 gap-2 sm:gap-4 max-w-lg mx-auto mt-8 sm:mt-12 px-4">
+              {[
+                { label: 'Days', value: countdown.days },
+                { label: 'Hours', value: countdown.hours },
+                { label: 'Minutes', value: countdown.minutes },
+                { label: 'Seconds', value: countdown.seconds }
+              ].map((item) => (
+                <div key={item.label} className="bg-white/20 backdrop-blur rounded-lg p-3 sm:p-4">
+                  <div className="text-2xl sm:text-4xl font-bold">{item.value}</div>
+                  <div className="text-xs sm:text-sm opacity-90">{item.label}</div>
+                </div>
+              ))}
+            </div>
+          )}
 
           {/* CTA Button */}
-          <div className="mt-8">
-            <Button
-              size="lg"
-              className="px-12 py-6 text-lg"
-              style={{ backgroundColor: primaryColor, color: secondaryColor }}
-              onClick={() => {
-                params.then(({ slug }) => router.push(`/live/events/${slug}/tickets`))
+          <div className="pt-6 sm:pt-8">
+            <Button 
+              size="lg" 
+              className="text-base sm:text-lg px-6 sm:px-8 py-4 sm:py-6"
+              style={{ 
+                backgroundColor: primaryColor,
+                color: secondaryColor 
               }}
+              onClick={() => router.push(`/live/events/${event.slug}/tickets`)}
             >
-              BOOK NOW
+              Get Your Tickets
             </Button>
           </div>
         </div>
       </section>
 
       {/* About Section */}
-      <section id="about" className="py-20" style={{ backgroundColor: secondaryColor }}>
-        <div className="container mx-auto px-6 max-w-4xl">
-          <div className="text-center space-y-6">
-            <h2 className="text-4xl font-bold" style={{ color: primaryColor }}>
-              {event.heroTitle || event.title}
-            </h2>
-            {event.heroSubtitle && (
-              <p className="text-2xl text-gray-600">{event.heroSubtitle}</p>
-            )}
-            <div className="prose max-w-none text-gray-700">
-              {event.description && (
-                <p className="text-lg leading-relaxed">{event.description}</p>
-              )}
-              {event.aboutSection && (
-                <div dangerouslySetInnerHTML={{ __html: event.aboutSection }} />
-              )}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Tickets Preview */}
-      <section id="tickets" className="py-20 bg-gray-50">
-        <div className="container mx-auto px-6">
-          <h2 className="text-4xl font-bold text-center mb-12" style={{ color: primaryColor }}>
-            TICKETS NOW ON SALE
+      <section id="about" className="py-12 sm:py-20 bg-white">
+        <div className="container mx-auto px-4 sm:px-6 max-w-4xl">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 sm:mb-8 text-center" style={{ color: primaryColor }}>
+            About the Event
           </h2>
           
-          <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
-            {event.ticketTypes.filter(tt => tt.isActive).map((ticket) => (
-              <div key={ticket.id} className="bg-white rounded-lg shadow-lg p-6 border-t-4" style={{ borderTopColor: primaryColor }}>
-                <h3 className="text-2xl font-bold mb-2">{ticket.name}</h3>
-                {ticket.requiresApproval && (
-                  <Badge className="bg-yellow-400 text-black mb-4">Approval required</Badge>
-                )}
-                <div className="text-3xl font-bold my-4" style={{ color: primaryColor }}>
-                  {event.currency} {Number(ticket.price).toFixed(2)}
-                </div>
-                {ticket.description && (
-                  <p className="text-gray-600 mb-4">{ticket.description}</p>
-                )}
-                <div className="text-sm text-gray-500 mb-4">
-                  {ticket.quantity - ticket.sold} available
-                </div>
-                <Button
-                  className="w-full"
-                  style={{ backgroundColor: primaryColor, color: secondaryColor }}
-                  onClick={() => {
-                    params.then(({ slug }) => router.push(`/live/events/${slug}/tickets`))
-                  }}
-                >
-                  BOOK NOW
-                </Button>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Venue Section */}
-      <section id="venue" className="py-20">
-        <div className="container mx-auto px-6 max-w-4xl">
-          <h2 className="text-3xl font-bold mb-6">{event.venue || 'Event Venue'}</h2>
-          <div className="bg-gray-50 rounded-lg p-8">
-            <div className="space-y-3 text-gray-700">
-              {event.addressLine1 && <p className="flex items-start">
-                <MapPinIcon className="mr-3 h-5 w-5 mt-0.5 flex-shrink-0" />
-                <span>{event.addressLine1}</span>
-              </p>}
-              {event.city && event.state && (
-                <p className="ml-8">{event.city}, {event.state}</p>
-              )}
-              {event.country && <p className="ml-8 font-semibold">{event.country}</p>}
-              {event.zipCode && <p className="ml-8">{event.zipCode}</p>}
-              
-              {(event.venue || event.city) && (
-                <div className="mt-6">
-                  <Button
-                    variant="outline"
-                    className="w-full sm:w-auto"
-                    onClick={() => {
-                      const address = `${event.venue || ''}, ${event.city || ''}, ${event.country || ''}`.trim()
-                      window.open(`https://maps.google.com?q=${encodeURIComponent(address)}`, '_blank')
-                    }}
-                    aria-label="Get directions to venue"
-                  >
-                    Get Directions on Google Maps
-                  </Button>
-                </div>
-              )}
+          {event.description && (
+            <div className="text-base sm:text-lg text-gray-700 mb-6 sm:mb-8 leading-relaxed whitespace-pre-wrap">
+              {event.description}
             </div>
-          </div>
-        </div>
-      </section>
+          )}
 
-      {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12">
-        <div className="container mx-auto px-6">
-          <div className="flex flex-col md:flex-row items-center justify-between space-y-4">
-            <div>
-              <p className="text-sm text-gray-400">
-                © 2024 {event.organization?.name || 'EventApp'}. All rights reserved.
+          {event.aboutSection && (
+            <div className="text-base sm:text-lg text-gray-700 leading-relaxed whitespace-pre-wrap">
+              {event.aboutSection}
+            </div>
+          )}
+
+          {!event.description && !event.aboutSection && (
+            <p className="text-center text-gray-500 italic">No description available</p>
+          )}
+
+          {/* Event Details Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mt-8 sm:mt-12">
+            <div className="bg-gray-50 p-4 sm:p-6 rounded-lg">
+              <h3 className="font-semibold text-base sm:text-lg mb-2 flex items-center">
+                <CalendarIcon className="mr-2 h-4 w-4 sm:h-5 sm:w-5" style={{ color: primaryColor }} />
+                Date & Time
+              </h3>
+              <p className="text-sm sm:text-base text-gray-700">
+                {format(new Date(event.eventDate), 'EEEE, MMMM dd, yyyy')}
+              </p>
+              <p className="text-sm sm:text-base text-gray-700">
+                {format(new Date(event.eventDate), 'h:mm a')}
+                {event.endDate && ` - ${format(new Date(event.endDate), 'h:mm a')}`}
               </p>
             </div>
-            <div className="flex items-center space-x-4">
-              {event.linkedinUrl && (
-                <a href={event.linkedinUrl} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn profile">
-                  <LinkedinIcon className="h-6 w-6" />
-                </a>
+
+            <div className="bg-gray-50 p-4 sm:p-6 rounded-lg">
+              <h3 className="font-semibold text-base sm:text-lg mb-2 flex items-center">
+                <MapPinIcon className="mr-2 h-4 w-4 sm:h-5 sm:w-5" style={{ color: primaryColor }} />
+                Location
+              </h3>
+              {event.venue && <p className="text-sm sm:text-base font-medium text-gray-900">{event.venue}</p>}
+              {event.addressLine1 && <p className="text-sm sm:text-base text-gray-700">{event.addressLine1}</p>}
+              {event.city && (
+                <p className="text-sm sm:text-base text-gray-700">
+                  {event.city}{event.state && `, ${event.state}`} {event.zipCode}
+                </p>
               )}
-              {event.twitterUrl && (
-                <a href={event.twitterUrl} target="_blank" rel="noopener noreferrer" aria-label="Twitter profile">
-                  <TwitterIcon className="h-6 w-6" />
-                </a>
+              {event.country && <p className="text-sm sm:text-base text-gray-700">{event.country}</p>}
+            </div>
+          </div>
+
+          {/* Organizer */}
+          {event.organization && (
+            <div className="mt-8 sm:mt-12 text-center">
+              <p className="text-sm sm:text-base text-gray-600">Organized by</p>
+              <p className="text-lg sm:text-xl font-semibold mt-2" style={{ color: primaryColor }}>
+                {event.organization.name}
+              </p>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* Tickets Section */}
+      <section id="tickets" className="py-12 sm:py-20 bg-gray-50">
+        <div className="container mx-auto px-4 sm:px-6 max-w-4xl">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 sm:mb-12 text-center" style={{ color: primaryColor }}>
+            Ticket Options
+          </h2>
+
+          {event.ticketTypes.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+              {event.ticketTypes.filter(t => t.isActive).map((ticket) => {
+                const available = ticket.quantity - ticket.sold
+                const isSoldOut = available <= 0
+
+                return (
+                  <div
+                    key={ticket.id}
+                    className="bg-white rounded-lg shadow-md p-4 sm:p-6 hover:shadow-lg transition-shadow"
+                  >
+                    <div className="flex justify-between items-start mb-3 sm:mb-4">
+                      <div>
+                        <h3 className="text-lg sm:text-xl font-semibold">{ticket.name}</h3>
+                        {ticket.description && (
+                          <p className="text-xs sm:text-sm text-gray-600 mt-1">{ticket.description}</p>
+                        )}
+                      </div>
+                      {isSoldOut && (
+                        <Badge variant="destructive" className="text-xs">Sold Out</Badge>
+                      )}
+                    </div>
+
+                    <div className="flex justify-between items-end">
+                      <div>
+                        <p className="text-2xl sm:text-3xl font-bold" style={{ color: primaryColor }}>
+                          ${Number(ticket.price).toFixed(2)}
+                        </p>
+                        <p className="text-xs sm:text-sm text-gray-500 mt-1">
+                          {available} / {ticket.quantity} available
+                        </p>
+                      </div>
+                    </div>
+
+                    {ticket.requiresApproval && (
+                      <p className="text-xs text-amber-600 mt-3 sm:mt-4">
+                        * Requires approval
+                      </p>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+          ) : (
+            <div className="text-center py-8 sm:py-12">
+              <p className="text-gray-500">Ticket information coming soon</p>
+            </div>
+          )}
+
+          <div className="mt-8 sm:mt-12 text-center">
+            <Button 
+              size="lg"
+              className="w-full sm:w-auto text-base sm:text-lg px-6 sm:px-12 py-4 sm:py-6"
+              style={{ 
+                backgroundColor: primaryColor,
+                color: secondaryColor 
+              }}
+              onClick={() => router.push(`/live/events/${event.slug}/tickets`)}
+            >
+              Continue to Registration
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* Venue/Map Section */}
+      {(event.venue || event.location) && (
+        <section id="venue" className="py-12 sm:py-20 bg-white">
+          <div className="container mx-auto px-4 sm:px-6 max-w-4xl">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 sm:mb-8 text-center" style={{ color: primaryColor }}>
+              Venue
+            </h2>
+
+            <div className="bg-gray-50 p-4 sm:p-8 rounded-lg">
+              {event.venue && (
+                <h3 className="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4">{event.venue}</h3>
               )}
-              {event.instagramUrl && (
-                <a href={event.instagramUrl} target="_blank" rel="noopener noreferrer" aria-label="Instagram profile">
-                  <InstagramIcon className="h-6 w-6" />
-                </a>
-              )}
-              {event.website && (
-                <a href={event.website} target="_blank" rel="noopener noreferrer" className="hover:underline">
-                  Visit Website
-                </a>
+              
+              <div className="space-y-2 text-sm sm:text-base text-gray-700">
+                {event.addressLine1 && <p>{event.addressLine1}</p>}
+                {event.city && (
+                  <p>
+                    {event.city}{event.state && `, ${event.state}`} {event.zipCode}
+                  </p>
+                )}
+                {event.country && <p>{event.country}</p>}
+              </div>
+
+              {event.latitude && event.longitude && (
+                <div className="mt-4 sm:mt-6">
+                  <a
+                    href={`https://www.google.com/maps?q=${event.latitude},${event.longitude}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center text-sm sm:text-base font-medium hover:underline"
+                    style={{ color: primaryColor }}
+                  >
+                    <MapPinIcon className="mr-2 h-4 w-4" />
+                    View on Google Maps
+                  </a>
+                </div>
               )}
             </div>
+          </div>
+        </section>
+      )}
+
+      {/* Footer */}
+      <footer className="bg-gray-900 text-white py-8 sm:py-12">
+        <div className="container mx-auto px-4 sm:px-6 max-w-4xl">
+          <div className="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0">
+            <div className="text-center sm:text-left">
+              <h3 className="text-lg sm:text-xl font-bold mb-2">{event.title}</h3>
+              {event.organization && (
+                <p className="text-sm text-gray-400">by {event.organization.name}</p>
+              )}
+            </div>
+
+            {/* Social Links */}
+            {(event.website || event.linkedinUrl || event.twitterUrl || event.instagramUrl) && (
+              <div className="flex space-x-4">
+                {event.website && (
+                  <a
+                    href={event.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-gray-300 transition-colors"
+                  >
+                    <GlobeIcon className="h-5 w-5 sm:h-6 sm:w-6" />
+                  </a>
+                )}
+                {event.linkedinUrl && (
+                  <a
+                    href={event.linkedinUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-gray-300 transition-colors"
+                  >
+                    <LinkedinIcon className="h-5 w-5 sm:h-6 sm:w-6" />
+                  </a>
+                )}
+                {event.twitterUrl && (
+                  <a
+                    href={event.twitterUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-gray-300 transition-colors"
+                  >
+                    <TwitterIcon className="h-5 w-5 sm:h-6 sm:w-6" />
+                  </a>
+                )}
+                {event.instagramUrl && (
+                  <a
+                    href={event.instagramUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-gray-300 transition-colors"
+                  >
+                    <InstagramIcon className="h-5 w-5 sm:h-6 sm:w-6" />
+                  </a>
+                )}
+              </div>
+            )}
+          </div>
+
+          <div className="mt-6 sm:mt-8 pt-6 sm:pt-8 border-t border-gray-800 text-center text-xs sm:text-sm text-gray-400">
+            <p>© {new Date().getFullYear()} {event.organization?.name || event.title}. All rights reserved.</p>
           </div>
         </div>
       </footer>
-    </div>
-  )
-}
-
-function CountdownBox({ label, value, primaryColor }: { label: string; value: number; primaryColor: string }) {
-  return (
-    <div className="text-center">
-      <div 
-        className="w-24 h-24 border-2 rounded-lg flex items-center justify-center text-4xl font-bold mb-2"
-        style={{ borderColor: primaryColor }}
-      >
-        {value.toString().padStart(2, '0')}
-      </div>
-      <div className="text-sm uppercase">{label}</div>
     </div>
   )
 }
