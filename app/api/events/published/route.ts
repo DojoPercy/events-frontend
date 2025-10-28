@@ -3,24 +3,37 @@ import { prisma } from '@/lib/prisma'
 
 export async function GET(request: NextRequest) {
   try {
-    // Fetch only published events (public access)
+    console.log('[PUBLISHED EVENTS API] Fetching published events')
+    
+    // Fetch published events OR non-draft events (public access)
     const events = await prisma.event.findMany({
       where: {
-        isPublished: true,
-        isDraft: false,
+        OR: [
+          { isPublished: true },
+          { isDraft: false }
+        ]
       },
       include: {
         ticketTypes: {
           where: { isActive: true }
         },
+        organization: {
+          select: {
+            name: true
+          }
+        }
       },
       orderBy: { eventDate: 'asc' }
     })
 
+    console.log(`[PUBLISHED EVENTS API] Found ${events.length} events`)
     return NextResponse.json(events)
   } catch (error) {
-    console.error('Error fetching published events:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    console.error('[PUBLISHED EVENTS API] Error fetching published events:', error)
+    return NextResponse.json({ 
+      error: 'Internal server error',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    }, { status: 500 })
   }
 }
 

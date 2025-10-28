@@ -7,12 +7,17 @@ export async function GET(
 ) {
   try {
     const { slug } = await params
-    // Fetch published event by slug (public access)
-    const event = await prisma.event.findUnique({
+    console.log('[PUBLIC EVENT API] Fetching event with slug:', slug)
+    
+    // Fetch event by slug (public access)
+    // Check for published events OR events that are not drafts
+    const event = await prisma.event.findFirst({
       where: { 
         slug: slug,
-        isPublished: true,
-        isDraft: false,
+        OR: [
+          { isPublished: true },
+          { isDraft: false }
+        ]
       },
       include: {
         ticketTypes: {
@@ -28,13 +33,29 @@ export async function GET(
     })
 
     if (!event) {
+      console.log('[PUBLIC EVENT API] Event not found with slug:', slug)
+      
+      // Debug: Check if event exists at all
+      const anyEvent = await prisma.event.findFirst({
+        where: { slug: slug },
+        select: { id: true, isPublished: true, isDraft: true, title: true }
+      })
+      
+      if (anyEvent) {
+        console.log('[PUBLIC EVENT API] Event exists but not published:', anyEvent)
+      }
+      
       return NextResponse.json({ error: 'Event not found' }, { status: 404 })
     }
 
+    console.log('[PUBLIC EVENT API] Event found:', event.id, event.title)
     return NextResponse.json(event)
   } catch (error) {
-    console.error('Error fetching public event:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    console.error('[PUBLIC EVENT API] Error fetching public event:', error)
+    return NextResponse.json({ 
+      error: 'Internal server error',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    }, { status: 500 })
   }
 }
 

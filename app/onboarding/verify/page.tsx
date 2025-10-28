@@ -13,19 +13,19 @@ export default function Verify() {
   }
 
   return (
-    <div className="container relative hidden h-screen flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
+    <div className="container relative min-h-screen flex flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
       {/* Left gradient panel */}
-      <div className="relative hidden h-full flex-col gradient-purple p-10 text-white lg:flex">
+      <div className="relative hidden h-full flex-col gradient-purple p-6 sm:p-8 lg:p-10 text-white lg:flex">
         <div className="absolute inset-0 gradient-mesh opacity-40" />
-        <div className="relative z-20 flex items-center text-2xl font-bold">
-          <div className="p-2 rounded-lg bg-white/20 backdrop-blur-sm mr-3">
-            <SparklesIcon className="w-6 h-6" />
+        <div className="relative z-20 flex items-center text-xl sm:text-2xl font-bold">
+          <div className="p-1.5 sm:p-2 rounded-lg bg-white/20 backdrop-blur-sm mr-2 sm:mr-3">
+            <SparklesIcon className="w-5 h-5 sm:w-6 sm:h-6" />
           </div>
           EventApp
         </div>
         <div className="relative z-20 mt-auto">
-          <blockquote className="space-y-4">
-            <p className="text-xl leading-relaxed">
+          <blockquote className="space-y-3 sm:space-y-4">
+            <p className="text-lg sm:text-xl leading-relaxed">
               &ldquo;Please check your email to verify your account and continue with creating your organization.&rdquo;
             </p>
             <footer className="text-sm text-white/80">EventApp Team</footer>
@@ -34,19 +34,19 @@ export default function Verify() {
       </div>
 
       {/* Right content */}
-      <div className="lg:p-8">
-        <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[380px]">
+      <div className="w-full p-4 sm:p-6 lg:p-8">
+        <div className="mx-auto flex w-full flex-col justify-center space-y-4 sm:space-y-6 sm:w-[380px]">
           <Card className="border-0 shadow-md">
-            <CardHeader className="text-center">
-              <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
-                <MailIcon className="h-6 w-6 text-primary" />
+            <CardHeader className="text-center p-4 sm:p-6">
+              <div className="mx-auto mb-3 sm:mb-4 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-xl bg-primary/10">
+                <MailIcon className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
               </div>
-              <CardTitle className="text-2xl">Check your email</CardTitle>
-              <CardDescription>
+              <CardTitle className="text-xl sm:text-2xl">Check your email</CardTitle>
+              <CardDescription className="text-sm">
                 We've sent a verification link to your email address. Please check your inbox and click the link to verify your account.
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-4 p-4 sm:p-6">
               <Button onClick={handleResendEmail} variant="outline" className="w-full">
                 <RefreshCwIcon className="mr-2 h-4 w-4" />
                 Resend verification email
