@@ -81,7 +81,7 @@ export default function CreateEventWizard() {
         window.history.replaceState(null, '', `/dashboard/events/create?id=${event.id}`)
       }
 
-      setEventData(prev => ({ ...prev, ...data }))
+      setEventData((prev: any) => ({ ...prev, ...data }))
       return event
     } catch (error) {
       console.error('Save error:', error)

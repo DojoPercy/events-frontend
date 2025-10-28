@@ -145,7 +145,7 @@ export function TicketingStep({ data, eventId, onNext, onBack }: any) {
                         {...register(`ticketTypes.${index}.name`)}
                         placeholder="Platinum Table - 10 Seats"
                       />
-                      {errors.ticketTypes?.[index]?.name && (
+                      {Array.isArray(errors.ticketTypes) && errors.ticketTypes[index]?.name?.message && (
                         <p className="text-sm text-red-500">{errors.ticketTypes[index]?.name?.message as string}</p>
                       )}
                     </div>

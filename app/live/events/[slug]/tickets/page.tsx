@@ -77,6 +77,7 @@ export default function TicketsPage({ params }: { params: Promise<{ slug: string
 
   const primaryColor = event?.primaryColor || "#D4A574"
   const secondaryColor = event?.secondaryColor || "#ffffff"
+  const currency = event?.currency || "USD"
 
   useEffect(() => {
     const fetchEvent = async () => {
@@ -275,7 +276,7 @@ export default function TicketsPage({ params }: { params: Promise<{ slug: string
                       </div>
                       <div className="ml-4 text-right">
                         <div className="text-3xl font-bold">
-                          {event.currency} {Number(ticket.price).toFixed(2)}
+                          {currency} {Number(ticket.price).toFixed(2)}
                         </div>
                         <div className="text-sm text-gray-500 mt-1">
                           {ticket.quantity - ticket.sold} available
@@ -353,7 +354,7 @@ export default function TicketsPage({ params }: { params: Promise<{ slug: string
                             <div className="text-sm text-gray-500">Qty: {ticket.quantity}</div>
                           </div>
                           <div className="text-right">
-                            <div className="font-semibold">{event.currency} {(Number(ticket.price) * ticket.quantity).toFixed(2)}</div>
+                            <div className="font-semibold">{currency} {(Number(ticket.price) * ticket.quantity).toFixed(2)}</div>
                           </div>
                         </div>
                       ))}
@@ -361,18 +362,18 @@ export default function TicketsPage({ params }: { params: Promise<{ slug: string
                       <div className="pt-3 space-y-2 border-t">
                         <div className="flex justify-between text-sm">
                           <span>Subtotal</span>
-                          <span>{event.currency} {orderDetails.subtotal.toFixed(2)}</span>
+                          <span>{currency} {orderDetails.subtotal.toFixed(2)}</span>
                         </div>
                         {event.taxRate && (
                           <div className="flex justify-between text-sm text-gray-600">
                             <span>{event.taxName || 'Tax'} ({event.taxRate}%)</span>
-                            <span>{event.currency} {orderDetails.tax.toFixed(2)}</span>
+                            <span>{currency} {orderDetails.tax.toFixed(2)}</span>
                           </div>
                         )}
                         <div className="flex justify-between font-bold text-lg pt-2 border-t">
                           <span>Total</span>
                           <span style={{ color: primaryColor }}>
-                            {event.currency} {orderDetails.total.toFixed(2)}
+                            {currency} {orderDetails.total.toFixed(2)}
                           </span>
                         </div>
                       </div>
@@ -411,7 +412,7 @@ export default function TicketsPage({ params }: { params: Promise<{ slug: string
                 eventId={event.id}
                 selectedTickets={selectedTickets}
                 orderDetails={orderDetails}
-                currency={event.currency}
+                currency={currency}
                 onBack={() => setStep(1)}
                 onSuccess={() => setStep(3)}
                 primaryColor={primaryColor}
@@ -424,11 +425,11 @@ export default function TicketsPage({ params }: { params: Promise<{ slug: string
                 {selectedTicketDetails.map((ticket) => (
                   <div key={ticket.id} className="flex justify-between">
                     <span>{ticket.name} × {ticket.quantity}</span>
-                    <span className="font-semibold">{event.currency} {(Number(ticket.price) * ticket.quantity).toFixed(2)}</span>
+                    <span className="font-semibold">{currency} {(Number(ticket.price) * ticket.quantity).toFixed(2)}</span>
                   </div>
                 ))}
                 <div className="pt-3 border-t font-bold text-lg">
-                  Total: <span style={{ color: primaryColor }}>{event.currency} {orderDetails.total.toFixed(2)}</span>
+                  Total: <span style={{ color: primaryColor }}>{currency} {orderDetails.total.toFixed(2)}</span>
                 </div>
               </div>
             </div>

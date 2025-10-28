@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
     const { ticketTypes, ...eventData } = body
 
     // Create or update draft event
-    let event
+    let event: { primaryColor: string | null; slug: string; id: string; venue: string | null; heroTitle: string | null; heroSubtitle: string | null; logoUrl: string | null; title: string; city: string | null; description: string | null; aboutSection: string | null; state: string | null; country: string | null; zipCode: string | null; linkedinUrl: string | null; twitterUrl: string | null; instagramUrl: string | null; website: string | null; addressLine1: string | null; createdAt: Date; updatedAt: Date; eventDate: Date; endDate: Date | null; timezone: string; location: string | null; addressLine2: string | null; latitude: number | null; longitude: number | null; placeId: string | null; imageUrl: string | null; coverImageUrl: string | null; isPublished: boolean; isDraft: boolean; secondaryColor: string | null; currency: string; taxRate: number | null; taxName: string | null; taxInclusive: boolean; organizationId: string }
     if (body.eventId) {
       // Filter out invalid fields and empty strings
       const updateData: any = {}

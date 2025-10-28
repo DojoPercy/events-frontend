@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, Suspense } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import { CalendarIcon, ClockIcon, CheckCircleIcon, XCircleIcon } from "lucide-react"
 import { format } from "date-fns"
@@ -31,7 +31,7 @@ interface Purchase {
   }
 }
 
-export default function CustomerPurchasesPage() {
+function CustomerPurchasesContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const email = searchParams.get('email')
@@ -234,3 +234,14 @@ export default function CustomerPurchasesPage() {
   )
 }
 
+export default function CustomerPurchasesPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Spinner />
+      </div>
+    }>
+      <CustomerPurchasesContent />
+    </Suspense>
+  )
+}

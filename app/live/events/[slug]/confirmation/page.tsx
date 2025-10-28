@@ -4,11 +4,13 @@ import { CheckIcon, ArrowLeftIcon, MailIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
-export default function ConfirmationPage({ 
+export default async function ConfirmationPage({ 
   searchParams 
 }: { 
-  searchParams: { purchaseId?: string } 
+  searchParams: Promise<{ purchaseId?: string }> 
 }) {
+  const { purchaseId } = await searchParams
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -52,9 +54,9 @@ export default function ConfirmationPage({
                   Thank you for your interest in our event! Your purchase request has been submitted successfully.
                 </p>
                 
-                {searchParams.purchaseId && (
+                {purchaseId && (
                   <div className="bg-muted p-4 rounded-md">
-                    <p className="text-sm font-medium">Purchase ID: {searchParams.purchaseId}</p>
+                    <p className="text-sm font-medium">Purchase ID: {purchaseId}</p>
                     <p className="text-xs text-muted-foreground mt-1">
                       Keep this ID for your records
                     </p>

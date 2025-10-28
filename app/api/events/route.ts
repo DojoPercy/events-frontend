@@ -70,11 +70,16 @@ export async function POST(request: NextRequest) {
       })
     }
 
-    // Create event with slug
+    // Create event with slug (avoid passing ticketTypes inadvertently)
     const slug = validatedData.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-*|-*$/g, '')
+
     const event = await prisma.event.create({
       data: {
-        ...validatedData,
+        title: validatedData.title,
+        description: validatedData.description ?? null,
+        location: validatedData.location ?? null,
+        imageUrl: validatedData.imageUrl ?? null,
+        isPublished: validatedData.isPublished ?? false,
         slug,
         eventDate: new Date(validatedData.eventDate),
         organizationId: organization.id,
