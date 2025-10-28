@@ -24,10 +24,13 @@ export function LandingPageStep({ data, onNext, onBack }: any) {
   const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm({
     resolver: zodResolver(landingPageSchema),
     defaultValues: data || {
-      primaryColor: '#000000',
+      primaryColor: '#D4A574',
       secondaryColor: '#ffffff'
     }
   })
+
+  const primaryColor = watch('primaryColor')
+  const secondaryColor = watch('secondaryColor')
 
   return (
     <form onSubmit={handleSubmit(onNext)}>
@@ -66,39 +69,51 @@ export function LandingPageStep({ data, onNext, onBack }: any) {
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="primaryColor">Primary Color</Label>
-              <div className="flex gap-2">
+              <div className="flex gap-2 items-center">
                 <Input
                   id="primaryColor"
                   type="color"
-                  {...register("primaryColor")}
-                  className="w-20 h-10"
+                  value={primaryColor || '#D4A574'}
+                  onChange={(e) => setValue('primaryColor', e.target.value)}
+                  className="w-16 h-10 cursor-pointer"
                 />
                 <Input
-                  {...register("primaryColor")}
-                  placeholder="#000000"
-                  className="flex-1"
+                  value={primaryColor || ''}
+                  onChange={(e) => setValue('primaryColor', e.target.value)}
+                  placeholder="#D4A574"
+                  className="flex-1 font-mono"
                 />
               </div>
+              <div 
+                className="h-8 rounded border"
+                style={{ backgroundColor: primaryColor || '#D4A574' }}
+              />
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="secondaryColor">Secondary Color</Label>
-              <div className="flex gap-2">
+              <div className="flex gap-2 items-center">
                 <Input
                   id="secondaryColor"
                   type="color"
-                  {...register("secondaryColor")}
-                  className="w-20 h-10"
+                  value={secondaryColor || '#ffffff'}
+                  onChange={(e) => setValue('secondaryColor', e.target.value)}
+                  className="w-16 h-10 cursor-pointer"
                 />
                 <Input
-                  {...register("secondaryColor")}
+                  value={secondaryColor || ''}
+                  onChange={(e) => setValue('secondaryColor', e.target.value)}
                   placeholder="#ffffff"
-                  className="flex-1"
+                  className="flex-1 font-mono"
                 />
               </div>
+              <div 
+                className="h-8 rounded border"
+                style={{ backgroundColor: secondaryColor || '#ffffff' }}
+              />
             </div>
           </div>
 
