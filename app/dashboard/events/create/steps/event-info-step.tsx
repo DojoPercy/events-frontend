@@ -15,7 +15,7 @@ const eventInfoSchema = z.object({
   description: z.string().optional(),
   eventDate: z.string().min(1, 'Start date is required'),
   endDate: z.string().optional(),
-  imageUrl: z.string().url().optional().or(z.literal('')),
+  logoUrl: z.string().url().optional().or(z.literal('')),
   coverImageUrl: z.string().url().optional().or(z.literal('')),
   website: z.string().url().optional().or(z.literal('')),
 })
@@ -26,7 +26,7 @@ export function EventInfoStep({ data, onNext, isFirstStep }: any) {
     defaultValues: data || {}
   })
 
-  const imageUrl = watch('imageUrl')
+  const logoUrl = watch('logoUrl')
   const coverImageUrl = watch('coverImageUrl')
 
   return (
@@ -66,12 +66,12 @@ export function EventInfoStep({ data, onNext, isFirstStep }: any) {
           </div>
 
           <div className="space-y-2">
-            <Label>Logo</Label>
+            <Label>Event Logo</Label>
             <ImageUpload
-              value={imageUrl || ''}
-              onChange={(url) => setValue('imageUrl', url)}
+              value={logoUrl || ''}
+              onChange={(url) => setValue('logoUrl', url)}
               label="Event Logo"
-              description="Event logo (recommended: 400x400px)"
+              description="Logo for navigation and hero section (recommended: 400x400px, PNG with transparent background)"
             />
           </div>
 

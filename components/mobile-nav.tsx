@@ -27,7 +27,7 @@ export function MobileNav({ children }: MobileNavProps) {
           <span className="sr-only">Toggle menu</span>
         </Button>
       </SheetTrigger>
-      <SheetContent side="left" className="w-[280px] sm:w-[350px]">
+      <SheetContent side="left" className="w-[280px] sm:w-[350px] bg-white dark:bg-black text-black dark:text-white">
         <SheetHeader>
           <SheetTitle className="text-left">Menu</SheetTitle>
         </SheetHeader>

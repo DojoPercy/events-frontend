@@ -71,6 +71,7 @@ export default function EventDetailPage({ params }: { params: Promise<{ slug: st
     const fetchEvent = async () => {
       try {
         const { slug } = await params
+        console.log('[EVENT PAGE] Fetching event with slug:', slug)
         const response = await fetch(`/api/events/public/${slug}`)
         if (!response.ok) {
           if (response.status === 404) {
@@ -83,6 +84,14 @@ export default function EventDetailPage({ params }: { params: Promise<{ slug: st
         }
 
         const eventData = await response.json()
+        console.log('[EVENT PAGE] Event data received:', {
+          id: eventData.id,
+          title: eventData.title,
+          hasLogoUrl: !!eventData.logoUrl,
+          logoUrl: eventData.logoUrl,
+          hasCoverImageUrl: !!eventData.coverImageUrl,
+          coverImageUrl: eventData.coverImageUrl
+        })
         setEvent(eventData)
       } catch (error) {
         console.error('Error fetching event:', error)
@@ -147,9 +156,25 @@ export default function EventDetailPage({ params }: { params: Promise<{ slug: st
       <header className="fixed top-0 w-full z-50 bg-white/95 backdrop-blur border-b">
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
-            {event.logoUrl && (
-              <img src={event.logoUrl} alt="Event Logo" className="h-12" />
-            )}
+            <div className="flex items-center space-x-3">
+              {event.logoUrl ? (
+                <img 
+                  src={event.logoUrl} 
+                  alt="Event Logo" 
+                  className="h-12 object-contain"
+                  onError={(e) => {
+                    console.error('[EVENT PAGE] Logo failed to load:', event.logoUrl)
+                    e.currentTarget.style.display = 'none'
+                  }}
+                />
+              ) : (
+                <div className="h-12 flex items-center">
+                  <span className="font-bold text-xl" style={{ color: primaryColor }}>
+                    {event.title}
+                  </span>
+                </div>
+              )}
+            </div>
             <nav className="flex items-center space-x-6">
               <a href="#about" className="hover:text-gray-600">About</a>
               <a href="#tickets" className="hover:text-gray-600">Tickets</a>
@@ -172,7 +197,15 @@ export default function EventDetailPage({ params }: { params: Promise<{ slug: st
           {/* Logo */}
           {event.logoUrl && (
             <div className="mb-4">
-              <img src={event.logoUrl} alt="Event Logo" className="h-32 mx-auto" />
+              <img 
+                src={event.logoUrl} 
+                alt="Event Logo" 
+                className="h-32 mx-auto object-contain"
+                onError={(e) => {
+                  console.error('[EVENT PAGE] Hero logo failed to load:', event.logoUrl)
+                  e.currentTarget.style.display = 'none'
+                }}
+              />
             </div>
           )}
 

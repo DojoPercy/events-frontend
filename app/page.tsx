@@ -145,7 +145,7 @@ export default function LandingPage() {
             viewport={{ once: true }}
             className="mx-auto max-w-3xl text-center"
           >
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold tracking-tight">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold tracking-tight text-white dark:text-white">
               Ready to get started?
             </h2>
             <p className="mt-3 sm:mt-4 text-base sm:text-lg lg:text-xl leading-7 sm:leading-8 text-white/80 px-4">
