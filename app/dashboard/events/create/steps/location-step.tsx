@@ -27,9 +27,10 @@ const locationSchema = z.object({
 })
 
 export function LocationStep({ data, onNext, onBack }: any) {
-  const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm({
+  const { register, handleSubmit, formState: { errors, isValid }, setValue, watch } = useForm({
     resolver: zodResolver(locationSchema),
-    defaultValues: data || { timezone: 'UTC' }
+    defaultValues: data || { timezone: 'UTC' },
+    mode: 'onChange'
   })
 
   const [autocomplete, setAutocomplete] = useState<any>(null)
@@ -174,9 +175,22 @@ export function LocationStep({ data, onNext, onBack }: any) {
             {errors.timezone && <p className="text-sm text-red-500">{errors.timezone.message as string}</p>}
           </div>
 
-          <div className="flex justify-between">
-            <Button type="button" variant="outline" onClick={onBack}>Back</Button>
-            <Button type="submit">Next: Ticketing</Button>
+          <div className="flex flex-col sm:flex-row justify-between gap-3 sm:gap-0 pt-4">
+            <Button 
+              type="button" 
+              variant="outline" 
+              onClick={onBack}
+              className="w-full sm:w-auto order-2 sm:order-1"
+            >
+              Back
+            </Button>
+            <Button 
+              type="submit"
+              disabled={!isValid}
+              className="w-full sm:w-auto order-1 sm:order-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-primary/50"
+            >
+              Next: Ticketing
+            </Button>
           </div>
         </CardContent>
       </Card>

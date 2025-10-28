@@ -115,42 +115,43 @@ export default function CreateEventWizard() {
   const progress = (currentStep / STEPS.length) * 100
 
   return (
-    <div className="max-w-5xl mx-auto py-8 px-6">
+    <div className="max-w-5xl mx-auto py-4 sm:py-6 lg:py-8 px-4 sm:px-6">
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="mb-8"
+        className="mb-6 sm:mb-8"
       >
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 sm:mb-6 gap-3">
           <div>
-            <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-purple-600 to-purple-400 bg-clip-text text-transparent">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight bg-gradient-to-r from-purple-600 to-purple-400 bg-clip-text text-transparent">
               Create New Event
             </h1>
-            <p className="text-muted-foreground mt-1">Complete all steps to publish your event</p>
+            <p className="text-muted-foreground mt-1 text-sm sm:text-base">Complete all steps to publish your event</p>
           </div>
           {isSaving && (
-            <div className="flex items-center gap-2 text-sm text-primary">
+            <div className="flex items-center gap-2 text-xs sm:text-sm text-primary">
               <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
               <span>Saving...</span>
             </div>
           )}
         </div>
         
-        <Progress value={progress} className="h-3 mb-8" />
+        <Progress value={progress} className="h-2 sm:h-3 mb-6 sm:mb-8" />
         
-        <div className="flex items-center justify-between px-2">
+        {/* Desktop Stepper */}
+        <div className="hidden md:flex items-center justify-between px-2">
           {STEPS.map((step, idx) => (
             <div key={step.id} className="flex items-center">
               <div className="flex flex-col items-center">
                 <div className={cn(
-                  "w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all",
+                  "w-8 lg:w-10 h-8 lg:h-10 rounded-full flex items-center justify-center border-2 transition-all text-sm lg:text-base",
                   currentStep >= step.id
                     ? "bg-primary border-primary text-white shadow-lg shadow-primary/30"
                     : currentStep === step.id
                     ? "border-primary bg-primary/10 text-primary"
                     : "border-muted-foreground/30 bg-card text-muted-foreground"
                 )}>
-                  {currentStep > step.id ? <CheckCircle2 className="w-5 h-5" /> : step.id}
+                  {currentStep > step.id ? <CheckCircle2 className="w-4 lg:w-5 h-4 lg:h-5" /> : step.id}
                 </div>
                 <span className={cn(
                   "mt-2 text-xs font-medium max-w-[100px] text-center",
@@ -160,7 +161,7 @@ export default function CreateEventWizard() {
                 </span>
               </div>
               {idx < STEPS.length - 1 && (
-                <div className="h-1 w-16 mx-2 bg-muted rounded-full">
+                <div className="h-1 w-12 lg:w-16 mx-2 bg-muted rounded-full">
                   <div
                     className="h-full bg-primary rounded-full transition-all duration-300"
                     style={{ width: currentStep > step.id ? '100%' : '0%' }}
@@ -169,6 +170,15 @@ export default function CreateEventWizard() {
               )}
             </div>
           ))}
+        </div>
+
+        {/* Mobile Stepper */}
+        <div className="md:hidden">
+          <div className="flex items-center justify-center gap-2 text-sm">
+            <span className="font-medium text-primary">Step {currentStep} of {STEPS.length}</span>
+            <span className="text-muted-foreground">•</span>
+            <span className="text-muted-foreground">{STEPS[currentStep - 1].name}</span>
+          </div>
         </div>
       </motion.div>
 

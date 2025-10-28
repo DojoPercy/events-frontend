@@ -21,52 +21,73 @@ const eventInfoSchema = z.object({
 })
 
 export function EventInfoStep({ data, onNext, isFirstStep }: any) {
-  const { register, handleSubmit, formState: { errors }, watch, setValue } = useForm({
+  const { register, handleSubmit, formState: { errors, isValid }, watch, setValue } = useForm({
     resolver: zodResolver(eventInfoSchema),
-    defaultValues: data || {}
+    defaultValues: data || {},
+    mode: 'onChange'
   })
 
   const logoUrl = watch('logoUrl')
   const coverImageUrl = watch('coverImageUrl')
+  const title = watch('title')
+  const eventDate = watch('eventDate')
+
+  const isFormValid = title && eventDate
 
   return (
     <form onSubmit={handleSubmit(onNext)}>
       <Card>
         <CardHeader>
-          <CardTitle>Event Information</CardTitle>
+          <CardTitle className="text-lg sm:text-xl">Event Information</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-6">
+        <CardContent className="space-y-4 sm:space-y-6">
           <div className="space-y-2">
-            <Label htmlFor="title">Event Title *</Label>
-            <Input id="title" {...register("title")} placeholder="Law Middle East Awards 2025" />
-            {errors.title && <p className="text-sm text-red-500">{errors.title.message as string}</p>}
+            <Label htmlFor="title" className="text-sm sm:text-base">Event Title *</Label>
+            <Input 
+              id="title" 
+              {...register("title")} 
+              placeholder="Law Middle East Awards 2025"
+              className="text-sm sm:text-base"
+            />
+            {errors.title && <p className="text-xs sm:text-sm text-red-500">{errors.title.message as string}</p>}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="description">Description</Label>
+            <Label htmlFor="description" className="text-sm sm:text-base">Description</Label>
             <Textarea
               id="description"
               {...register("description")}
               placeholder="Recognising the region's legal elite..."
               rows={5}
+              className="text-sm sm:text-base resize-none"
             />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="eventDate">Start Date & Time *</Label>
-              <Input id="eventDate" type="datetime-local" {...register("eventDate")} />
-              {errors.eventDate && <p className="text-sm text-red-500">{errors.eventDate.message as string}</p>}
+              <Label htmlFor="eventDate" className="text-sm sm:text-base">Start Date & Time *</Label>
+              <Input 
+                id="eventDate" 
+                type="datetime-local" 
+                {...register("eventDate")}
+                className="text-sm sm:text-base"
+              />
+              {errors.eventDate && <p className="text-xs sm:text-sm text-red-500">{errors.eventDate.message as string}</p>}
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="endDate">End Date & Time</Label>
-              <Input id="endDate" type="datetime-local" {...register("endDate")} />
+              <Label htmlFor="endDate" className="text-sm sm:text-base">End Date & Time</Label>
+              <Input 
+                id="endDate" 
+                type="datetime-local" 
+                {...register("endDate")}
+                className="text-sm sm:text-base"
+              />
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label>Event Logo</Label>
+            <Label className="text-sm sm:text-base">Event Logo</Label>
             <ImageUpload
               value={logoUrl || ''}
               onChange={(url) => setValue('logoUrl', url)}
@@ -76,7 +97,7 @@ export function EventInfoStep({ data, onNext, isFirstStep }: any) {
           </div>
 
           <div className="space-y-2">
-            <Label>Cover Image</Label>
+            <Label className="text-sm sm:text-base">Cover Image</Label>
             <ImageUpload
               value={coverImageUrl || ''}
               onChange={(url) => setValue('coverImageUrl', url)}
@@ -86,13 +107,24 @@ export function EventInfoStep({ data, onNext, isFirstStep }: any) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="website">Event Website (optional)</Label>
-            <Input id="website" {...register("website")} placeholder="https://example.com" />
-            {errors.website && <p className="text-sm text-red-500">{errors.website.message as string}</p>}
+            <Label htmlFor="website" className="text-sm sm:text-base">Event Website (optional)</Label>
+            <Input 
+              id="website" 
+              {...register("website")} 
+              placeholder="https://example.com"
+              className="text-sm sm:text-base"
+            />
+            {errors.website && <p className="text-xs sm:text-sm text-red-500">{errors.website.message as string}</p>}
           </div>
 
-          <div className="flex justify-end">
-            <Button type="submit">Next: Location & Timezone</Button>
+          <div className="flex justify-end pt-4">
+            <Button 
+              type="submit"
+              disabled={!isFormValid}
+              className="disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-primary/50"
+            >
+              Next: Location & Timezone
+            </Button>
           </div>
         </CardContent>
       </Card>

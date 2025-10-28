@@ -139,9 +139,21 @@ export function LandingPageStep({ data, onNext, onBack }: any) {
             </div>
           </div>
 
-          <div className="flex justify-between">
-            <Button type="button" variant="outline" onClick={onBack}>Back</Button>
-            <Button type="submit">Next: Review</Button>
+          <div className="flex flex-col sm:flex-row justify-between gap-3 sm:gap-0 pt-4">
+            <Button 
+              type="button" 
+              variant="outline" 
+              onClick={onBack}
+              className="w-full sm:w-auto order-2 sm:order-1"
+            >
+              Back
+            </Button>
+            <Button 
+              type="submit"
+              className="w-full sm:w-auto order-1 sm:order-2"
+            >
+              Next: Review
+            </Button>
           </div>
         </CardContent>
       </Card>
