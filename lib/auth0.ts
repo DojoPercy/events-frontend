@@ -15,7 +15,7 @@ export const onboardingClient = new Auth0Client({
   secret: process.env.SESSION_ENCRYPTION_SECRET,
   routes: {
     callback: "/onboarding/callback",
-    login: "/onboarding/signup",
+    login: "/onboarding/login",
     logout: "/",
   },
   authorizationParameters: {

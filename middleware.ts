@@ -1,7 +1,13 @@
 import type { NextRequest } from "next/server"
-import { appClient } from "./lib/auth0"
+import { appClient, onboardingClient } from "./lib/auth0"
 
 export async function middleware(request: NextRequest) {
+  // Route onboarding traffic to onboardingClient (no org required)
+  if (request.nextUrl.pathname.startsWith("/onboarding")) {
+    return await onboardingClient.middleware(request)
+  }
+  
+  // Route all other traffic to appClient (requires org context)
   return await appClient.middleware(request)
 }
 
