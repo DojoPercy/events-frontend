@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { Menu, X, Home, CalendarIcon, ShoppingCartIcon, Settings, Users } from "lucide-react"
+import { Menu, X, Home, CalendarIcon, ShoppingCartIcon, Settings, Users, Mail } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   Sheet,
@@ -68,6 +68,15 @@ export function MobileNav({ children }: MobileNavProps) {
           >
             <Users className="mr-3 h-5 w-5" />
             Team
+          </Link>
+          
+          <Link
+            href="/dashboard/organization/email-templates"
+            onClick={() => setOpen(false)}
+            className="flex items-center px-4 py-3 text-sm font-medium rounded-lg hover:bg-accent transition-colors"
+          >
+            <Mail className="mr-3 h-5 w-5" />
+            Email Templates
           </Link>
           
           <Link

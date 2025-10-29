@@ -18,9 +18,37 @@ model Organization {
   updatedAt   DateTime @updatedAt
 
   // Relations
-  events Event[]
+  events         Event[]
+  emailTemplates EmailTemplate[]
 
   @@map("organizations")
+}
+
+model EmailTemplate {
+  id             String   @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  
+  // Template identification
+  type           String   // 'ticket_confirmation', 'ticket_approval', 'ticket_rejection', 'organization_invitation'
+  name           String
+  
+  // Template content
+  subject        String
+  htmlBody       String   @db.Text
+  
+  // Customization
+  primaryColor   String   @default("#8B5CF6")
+  secondaryColor String   @default("#A855F7")
+  logoUrl        String?
+  
+  // Metadata
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  
+  @@unique([organizationId, type])
+  @@map("email_templates")
 }
 
 model Event {

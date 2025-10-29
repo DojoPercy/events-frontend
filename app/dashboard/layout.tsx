@@ -1,7 +1,7 @@
 import Link from "next/link"
 import { redirect } from "next/navigation"
 import { Auth0Provider } from "@auth0/nextjs-auth0"
-import { SettingsIcon, CalendarIcon, ShoppingCartIcon, SparklesIcon, Users } from "lucide-react"
+import { SettingsIcon, CalendarIcon, ShoppingCartIcon, SparklesIcon, Users, Mail } from "lucide-react"
 
 import { appClient, managementClient } from "@/lib/auth0"
 import { Button } from "@/components/ui/button"

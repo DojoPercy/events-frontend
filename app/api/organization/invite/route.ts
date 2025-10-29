@@ -90,7 +90,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json(
           { 
             error: 'Auth0 Configuration Required: Please set the "Application Login URI" in Auth0 Dashboard. Go to Applications > Your App > Settings > Application Login URI and set it to: ' + 
-                   (process.env.APP_BASE_URL || 'http://localhost:3000') + '/invitation'
+                   (process.env.APP_BASE_URL || 'http://localhost:3000') + '/auth/login/invitation'
           },
           { status: 400 }
         )
