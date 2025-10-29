@@ -7,29 +7,41 @@ import { managementClient, onboardingClient } from "@/lib/auth0"
 import { SignUpForm } from "./signup-form"
 
 export default async function SignUp() {
-  const session = await onboardingClient.getSession()
+  try {
+    const session = await onboardingClient.getSession()
 
-  if (session) {
-    // Check if user already belongs to an organization
-    try {
-      const { data: orgs } = await managementClient.users.getUserOrganizations({
-        id: session.user.sub,
-      })
-
-      if (orgs.length > 0) {
-        // User has organizations, redirect to dashboard login
-        const authParams = new URLSearchParams({
-          organization: orgs[0].id,
-          returnTo: "/dashboard",
+    if (session) {
+      console.log('[SIGNUP PAGE] User has session, checking organizations')
+      
+      // Check if user already belongs to an organization
+      try {
+        const { data: orgs } = await managementClient.users.getUserOrganizations({
+          id: session.user.sub,
         })
-        redirect(`/auth/login?${authParams.toString()}`)
+
+        console.log('[SIGNUP PAGE] Found', orgs.length, 'organizations')
+
+        if (orgs.length > 0) {
+          // User has organizations, redirect to dashboard login
+          const authParams = new URLSearchParams({
+            organization: orgs[0].id,
+            returnTo: "/dashboard",
+          })
+          console.log('[SIGNUP PAGE] Redirecting to auth/login with org')
+          redirect(`/auth/login?${authParams.toString()}`)
+        }
+      } catch (error) {
+        console.error("[SIGNUP PAGE] Error checking organizations:", error)
+        // Continue to create org page if we can't check
       }
-    } catch (error) {
-      console.error("Error checking organizations:", error)
+      
+      // No organizations found, proceed to create
+      console.log('[SIGNUP PAGE] No orgs, redirecting to create')
+      redirect("/onboarding/create")
     }
-    
-    // No organizations found, proceed to create
-    redirect("/onboarding/create")
+  } catch (error) {
+    console.error('[SIGNUP PAGE] Fatal error:', error)
+    // If there's an error, just show the signup form
   }
 
   return (
