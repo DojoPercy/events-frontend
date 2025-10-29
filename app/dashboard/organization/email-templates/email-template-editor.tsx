@@ -6,7 +6,7 @@ import { Loader2, Eye, Save, RotateCcw, Palette } from "lucide-react"
 import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/label"
+import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import {
@@ -27,59 +27,59 @@ interface EmailTemplateEditorProps {
   existingTemplate?: any
 }
 
-const DEFAULT_HTML_BODY = `
-<!DOCTYPE html>
-<html>
-<head>
-  <style>
-    body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f7; }
-    .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; }
-    .header { background: linear-gradient(135deg, {{primaryColor}} 0%, {{secondaryColor}} 100%); padding: 40px 30px; text-align: center; }
-    .header h1 { color: #ffffff; margin: 0; font-size: 28px; }
-    .content { padding: 40px 30px; color: #333333; }
-    .details-box { background-color: #f9fafb; border-left: 4px solid {{primaryColor}}; padding: 20px; margin: 24px 0; border-radius: 4px; }
-    .button { display: inline-block; padding: 16px 32px; background-color: {{primaryColor}}; color: #ffffff; text-decoration: none; border-radius: 6px; font-weight: 600; }
-    .footer { background-color: #f9fafb; padding: 30px; text-align: center; color: #6b7280; font-size: 14px; }
-  </style>
-</head>
-<body>
-  <table width="100%" cellpadding="0" cellspacing="0">
-    <tr>
-      <td align="center">
-        <div class="container">
-          <div class="header">
-            <h1>{{organizationName}}</h1>
-          </div>
-          <div class="content">
-            <h2>Hello {{customerName}},</h2>
-            <p>This is regarding your ticket request for <strong>{{eventTitle}}</strong>.</p>
-            
-            <div class="details-box">
-              <h3>Details</h3>
-              <p><strong>Event:</strong> {{eventTitle}}</p>
-              <p><strong>Date:</strong> {{eventDate}}</p>
-              <p><strong>Location:</strong> {{eventLocation}}</p>
-              <p><strong>Ticket Type:</strong> {{ticketType}}</p>
-              <p><strong>Quantity:</strong> {{quantity}}</p>
-              <p><strong>Total:</strong> ${{totalAmount}}</p>
-            </div>
-            
-            <p style="text-align: center;">
-              <a href="{{trackingUrl}}" class="button">View Details</a>
-            </p>
-            
-            <p>Reference ID: {{purchaseId}}</p>
-          </div>
-          <div class="footer">
-            <p>© {{year}} {{organizationName}}. All rights reserved.</p>
-          </div>
-        </div>
-      </td>
-    </tr>
-  </table>
-</body>
-</html>
-`.trim()
+const DEFAULT_HTML_BODY = [
+  '<!DOCTYPE html>',
+  '<html>',
+  '<head>',
+  '  <style>',
+  '    body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f7; }',
+  '    .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; }',
+  '    .header { background: linear-gradient(135deg, {{primaryColor}} 0%, {{secondaryColor}} 100%); padding: 40px 30px; text-align: center; }',
+  '    .header h1 { color: #ffffff; margin: 0; font-size: 28px; }',
+  '    .content { padding: 40px 30px; color: #333333; }',
+  '    .details-box { background-color: #f9fafb; border-left: 4px solid {{primaryColor}}; padding: 20px; margin: 24px 0; border-radius: 4px; }',
+  '    .button { display: inline-block; padding: 16px 32px; background-color: {{primaryColor}}; color: #ffffff; text-decoration: none; border-radius: 6px; font-weight: 600; }',
+  '    .footer { background-color: #f9fafb; padding: 30px; text-align: center; color: #6b7280; font-size: 14px; }',
+  '  </style>',
+  '</head>',
+  '<body>',
+  '  <table width="100%" cellpadding="0" cellspacing="0">',
+  '    <tr>',
+  '      <td align="center">',
+  '        <div class="container">',
+  '          <div class="header">',
+  '            <h1>{{organizationName}}</h1>',
+  '          </div>',
+  '          <div class="content">',
+  '            <h2>Hello {{customerName}},</h2>',
+  '            <p>This is regarding your ticket request for <strong>{{eventTitle}}</strong>.</p>',
+  '            ',
+  '            <div class="details-box">',
+  '              <h3>Details</h3>',
+  '              <p><strong>Event:</strong> {{eventTitle}}</p>',
+  '              <p><strong>Date:</strong> {{eventDate}}</p>',
+  '              <p><strong>Location:</strong> {{eventLocation}}</p>',
+  '              <p><strong>Ticket Type:</strong> {{ticketType}}</p>',
+  '              <p><strong>Quantity:</strong> {{quantity}}</p>',
+  '              <p><strong>Total:</strong> ${{totalAmount}}</p>',
+  '            </div>',
+  '            ',
+  '            <p style="text-align: center;">',
+  '              <a href="{{trackingUrl}}" class="button">View Details</a>',
+  '            </p>',
+  '            ',
+  '            <p>Reference ID: {{purchaseId}}</p>',
+  '          </div>',
+  '          <div class="footer">',
+  '            <p>© {{year}} {{organizationName}}. All rights reserved.</p>',
+  '          </div>',
+  '        </div>',
+  '      </td>',
+  '    </tr>',
+  '  </table>',
+  '</body>',
+  '</html>',
+].join('\n')
 
 export function EmailTemplateEditor({
   organizationId,
@@ -175,7 +175,7 @@ export function EmailTemplateEditor({
               placeholder="Enter email subject..."
             />
             <p className="text-xs text-muted-foreground">
-              Use variables like {'{{eventTitle}}'} or {'{{customerName}}'}
+              Use variables like {'{{'} eventTitle {'}}'}  or {'{{'} customerName {'}}'}
             </p>
           </div>
 
@@ -190,7 +190,7 @@ export function EmailTemplateEditor({
               placeholder="Enter HTML template..."
             />
             <p className="text-xs text-muted-foreground">
-              Full HTML email template. Use variables like {'{{customerName}}'}, {'{{eventTitle}}'}, etc.
+              Full HTML email template. Use variables like {'{{'} customerName {'}}'}, {'{{'} eventTitle {'}}'}, etc.
             </p>
           </div>
         </TabsContent>
