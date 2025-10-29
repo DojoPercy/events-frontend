@@ -31,9 +31,9 @@ export default function LandingPage() {
               Contact
             </Link>
             <Button variant="gradient" size="default" className="text-xs sm:text-sm px-3 sm:px-4 h-8 sm:h-10" asChild>
-              <Link href={session ? "/dashboard" : "/login"}>
-                <span className="hidden sm:inline">{session ? "Dashboard" : "Get Started"}</span>
-                <span className="sm:hidden">{session ? "Dashboard" : "Get Started"}</span>
+              <Link href={session.user ? "/dashboard" : "/login"}>
+                <span className="hidden sm:inline">{session.user ? "Dashboard" : "Get Started"}</span>
+                <span className="sm:hidden">{session.user ? "Dashboard" : "Get Started"}</span>
                 <ArrowRightIcon className="ml-1 sm:ml-2 h-3 w-3 sm:h-4 sm:w-4" />
               </Link>
             </Button>
