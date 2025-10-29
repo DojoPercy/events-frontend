@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { appClient } from '@/lib/auth0'
 import { sendSimpleEmail } from '@/lib/email-apps-script'
+import { format } from 'date-fns'
 
 export async function POST(
   request: NextRequest,
@@ -56,32 +57,30 @@ export async function POST(
       }
     })
 
-    // Send rejection email to buyer
+    // Send HTML rejection email to buyer
     try {
+      const { generateRejectionEmail } = await import('@/lib/email-templates')
+      
+      const htmlContent = generateRejectionEmail({
+        customerName: `${purchase.firstName} ${purchase.lastName}`,
+        eventTitle: purchase.event.title,
+        eventDate: purchase.event.eventDate 
+          ? format(new Date(purchase.event.eventDate), "MMMM d, yyyy 'at' h:mm a") 
+          : 'TBD',
+        ticketTypeName: purchase.ticketType.name,
+        quantity: purchase.quantity,
+        totalAmount: purchase.totalAmount.toString(),
+        purchaseId: purchase.id,
+        organizationName: purchase.event.organization.name || 'Event Team',
+        rejectionReason: notes || 'We are unable to process your ticket request at this time due to capacity constraints or other event limitations.',
+        customerEmail: purchase.email
+      })
+
       await sendSimpleEmail({
         to: purchase.email,
-        subject: `Update on Your Ticket Request: ${purchase.event.title}`,
-        body: `Dear ${purchase.firstName} ${purchase.lastName},
-
-We regret to inform you that your ticket request for ${purchase.event.title} has been rejected.
-
-PURCHASE DETAILS:
-- Event: ${purchase.event.title}
-- Ticket Type: ${purchase.ticketType.name}
-- Quantity: ${purchase.quantity}
-- Total Amount: $${purchase.totalAmount}
-- Purchase ID: ${purchase.id}
-
-${notes ? `Reason: ${notes}` : 'Unfortunately, we are unable to process your request at this time.'}
-
-VIEW YOUR PURCHASES:
-Click here to view all your ticket purchase requests:
-${process.env.APP_BASE_URL || 'http://localhost:3000'}/customer/purchases?email=${encodeURIComponent(purchase.email)}
-
-If you have any questions, please contact us.
-
-Best regards,
-${purchase.event.organization.name || 'Event Team'}`
+        subject: `Ticket Request Update: ${purchase.event.title}`,
+        body: htmlContent,
+        isHtml: true
       })
     } catch (emailError) {
       console.error('Error sending rejection email:', emailError)

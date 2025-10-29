@@ -83,7 +83,18 @@ export async function sendCustomerNotification(email: string, status: 'approved'
 }
 
 // Simple email sender with custom to, subject, and body
-export async function sendSimpleEmail({ to, subject, body }: { to: string; subject: string; body: string }) {
+// Supports both plain text and HTML emails
+export async function sendSimpleEmail({ 
+  to, 
+  subject, 
+  body, 
+  isHtml = false 
+}: { 
+  to: string
+  subject: string
+  body: string
+  isHtml?: boolean 
+}) {
   const appsScriptUrl = process.env.APPS_SCRIPT_WEBHOOK_URL
   
   if (!appsScriptUrl) {
@@ -100,7 +111,8 @@ export async function sendSimpleEmail({ to, subject, body }: { to: string; subje
       body: JSON.stringify({
         to,
         subject,
-        body
+        body,
+        isHtml // Pass this to the Apps Script to handle HTML rendering
       })
     })
 

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { appClient } from '@/lib/auth0'
 import { sendSimpleEmail } from '@/lib/email-apps-script'
+import { format } from 'date-fns'
 
 export async function POST(
   request: NextRequest,
@@ -64,32 +65,32 @@ export async function POST(
       }
     })
 
-    // Send approval email to buyer
+    // Send HTML approval email to buyer
     try {
+      const { generateApprovalEmail } = await import('@/lib/email-templates')
+      
+      const htmlContent = generateApprovalEmail({
+        customerName: `${purchase.firstName} ${purchase.lastName}`,
+        eventTitle: purchase.event.title,
+        eventDate: purchase.event.eventDate 
+          ? format(new Date(purchase.event.eventDate), "MMMM d, yyyy 'at' h:mm a") 
+          : 'TBD',
+        ticketTypeName: purchase.ticketType.name,
+        quantity: purchase.quantity,
+        totalAmount: purchase.totalAmount.toString(),
+        purchaseId: purchase.id,
+        organizationName: purchase.event.organization.name || 'Event Team',
+        customerEmail: purchase.email,
+        eventLocation: (purchase.event.location || purchase.event.venue) || undefined,
+        // Payment link will be sent separately - this is a placeholder
+        paymentLink: `${process.env.APP_BASE_URL || 'http://localhost:3000'}/payment/${purchase.id}`
+      })
+
       await sendSimpleEmail({
         to: purchase.email,
-        subject: `Your Ticket Request Has Been Approved: ${purchase.event.title}`,
-        body: `Dear ${purchase.firstName} ${purchase.lastName},
-
-Great news! Your ticket request has been approved.
-
-PURCHASE DETAILS:
-- Event: ${purchase.event.title}
-- Ticket Type: ${purchase.ticketType.name}
-- Quantity: ${purchase.quantity}
-- Total Amount: $${purchase.totalAmount}
-- Purchase ID: ${purchase.id}
-
-Your tickets have been confirmed. You will receive further details about the event soon.
-
-VIEW YOUR PURCHASES:
-Click here to view all your ticket purchases:
-${process.env.APP_BASE_URL || 'http://localhost:3000'}/customer/purchases?email=${encodeURIComponent(purchase.email)}
-
-Thank you for your purchase!
-
-Best regards,
-${purchase.event.organization.name || 'Event Team'}`
+        subject: `✓ Ticket Request Approved: ${purchase.event.title}`,
+        body: htmlContent,
+        isHtml: true
       })
     } catch (emailError) {
       console.error('Error sending approval email:', emailError)

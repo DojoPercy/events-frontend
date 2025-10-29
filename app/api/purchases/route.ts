@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma'
 import { appClient } from '@/lib/auth0'
 import { sendSimpleEmail } from '@/lib/email-apps-script'
 import { z } from 'zod'
+import { format } from 'date-fns'
 
 const createPurchaseSchema = z.object({
   eventId: z.string(),
@@ -136,33 +137,28 @@ export async function POST(request: NextRequest) {
       where: { id: purchase.ticketTypeId }
     })
 
-    // Send email to the buyer immediately
+    // Send HTML email to the buyer immediately
     try {
+      const { generatePurchaseConfirmationEmail } = await import('@/lib/email-templates')
+      
+      const htmlContent = generatePurchaseConfirmationEmail({
+        customerName: `${purchase.firstName} ${purchase.lastName}`,
+        eventTitle: event?.title || 'Event',
+        eventDate: event?.eventDate ? format(new Date(event.eventDate), "MMMM d, yyyy 'at' h:mm a") : 'TBD',
+        ticketTypeName: ticketTypeDetails?.name || 'Ticket',
+        quantity: purchase.quantity,
+        totalAmount: purchase.totalAmount.toString(),
+        purchaseId: purchase.id,
+        organizationName: event?.organization.name || 'Event Team',
+        customerEmail: purchase.email,
+        eventLocation: (event?.location || event?.venue) || undefined
+      })
+
       await sendSimpleEmail({
         to: purchase.email,
-        subject: `Your Ticket Request for ${event?.title || 'Event'}`,
-        body: `Dear ${purchase.firstName} ${purchase.lastName},
-
-Thank you for your ticket request for ${event?.title || 'the event'}.
-
-Request Details:
-- Event: ${event?.title || 'Event'}
-- Ticket Type: ${ticketTypeDetails?.name || 'Ticket'}
-- Quantity: ${purchase.quantity}
-- Total Amount: $${purchase.totalAmount}
-
-Your request has been submitted and is pending approval. You will receive an email notification once your request is approved.
-
-Purchase ID: ${purchase.id}
-
-VIEW YOUR PURCHASES:
-Click here to check the status of all your ticket purchases:
-${process.env.APP_BASE_URL || 'http://localhost:3000'}/customer/purchases?email=${encodeURIComponent(purchase.email)}
-
-If you have any questions, please contact us.
-
-Best regards,
-${event?.organization.name || 'Event Team'}`
+        subject: `Ticket Request Received: ${event?.title || 'Event'}`,
+        body: htmlContent,
+        isHtml: true
       })
     } catch (emailError) {
       console.error('Error sending confirmation email:', emailError)
