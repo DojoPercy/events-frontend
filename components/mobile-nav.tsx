@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { Menu, X, Home, CalendarIcon, ShoppingCartIcon, Settings } from "lucide-react"
+import { Menu, X, Home, CalendarIcon, ShoppingCartIcon, Settings, Users } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   Sheet,
@@ -59,6 +59,15 @@ export function MobileNav({ children }: MobileNavProps) {
           >
             <ShoppingCartIcon className="mr-3 h-5 w-5" />
             Purchases
+          </Link>
+          
+          <Link
+            href="/dashboard/organization/members"
+            onClick={() => setOpen(false)}
+            className="flex items-center px-4 py-3 text-sm font-medium rounded-lg hover:bg-accent transition-colors"
+          >
+            <Users className="mr-3 h-5 w-5" />
+            Team
           </Link>
           
           <Link

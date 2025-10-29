@@ -1,7 +1,7 @@
 import Link from "next/link"
 import { redirect } from "next/navigation"
 import { Auth0Provider } from "@auth0/nextjs-auth0"
-import { SettingsIcon, CalendarIcon, ShoppingCartIcon, SparklesIcon } from "lucide-react"
+import { SettingsIcon, CalendarIcon, ShoppingCartIcon, SparklesIcon, Users } from "lucide-react"
 
 import { appClient, managementClient } from "@/lib/auth0"
 import { Button } from "@/components/ui/button"
@@ -114,6 +114,13 @@ export default async function DashboardLayout({
               >
                 <ShoppingCartIcon className="mr-1.5 h-4 w-4" />
                 Purchases
+              </Link>
+              <Link
+                href="/dashboard/organization/members"
+                className="px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground hover:bg-accent rounded-lg flex items-center"
+              >
+                <Users className="mr-1.5 h-4 w-4" />
+                Team
               </Link>
             </div>
           </div>
