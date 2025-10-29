@@ -11,6 +11,8 @@ export async function GET(request: NextRequest) {
     const location = searchParams.get('location') || ''
     const color = searchParams.get('color') || '#8B5CF6'
 
+    console.log('[OG IMAGE] Generating with:', { title, date, location, color })
+
     return new ImageResponse(
       (
         <div
@@ -126,8 +128,14 @@ export async function GET(request: NextRequest) {
       }
     )
   } catch (error) {
-    console.error('Error generating OG image:', error)
-    return new Response('Failed to generate image', { status: 500 })
+    console.error('[OG IMAGE] Error generating:', error)
+    // Return a simple fallback response instead of error
+    return new Response('OG Image generation failed', { 
+      status: 500,
+      headers: {
+        'Content-Type': 'text/plain',
+      }
+    })
   }
 }
 

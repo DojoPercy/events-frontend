@@ -17,16 +17,19 @@ interface Event {
 
 async function getEvent(slug: string): Promise<Event | null> {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000'
     const response = await fetch(`${baseUrl}/api/events/public/${slug}`, {
       cache: 'no-store',
+      next: { revalidate: 0 }
     })
     
     if (!response.ok) {
+      console.error('[METADATA] Failed to fetch event:', response.status)
       return null
     }
     
-    return await response.json()
+    const data = await response.json()
+    return data
   } catch (error) {
     console.error('[METADATA] Error fetching event:', error)
     return null
