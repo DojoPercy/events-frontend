@@ -6,10 +6,8 @@ import { motion } from "framer-motion"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { useUser } from "@auth0/nextjs-auth0"
 
 export default function LandingPage() {
-  const session = useUser()
   return (
     <div className="min-h-screen">
       {/* Header */}
@@ -31,9 +29,8 @@ export default function LandingPage() {
               Contact
             </Link>
             <Button variant="gradient" size="default" className="text-xs sm:text-sm px-3 sm:px-4 h-8 sm:h-10" asChild>
-              <Link href={session.user ? "/dashboard" : "/login"}>
-                <span className="hidden sm:inline">{session.user ? "Dashboard" : "Get Started"}</span>
-                <span className="sm:hidden">{session.user ? "Dashboard" : "Get Started"}</span>
+              <Link href="/login">
+                Get Started
                 <ArrowRightIcon className="ml-1 sm:ml-2 h-3 w-3 sm:h-4 sm:w-4" />
               </Link>
             </Button>
