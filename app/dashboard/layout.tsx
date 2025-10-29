@@ -5,7 +5,7 @@ import { SettingsIcon, CalendarIcon, ShoppingCartIcon, SparklesIcon } from "luci
 
 import { appClient, managementClient } from "@/lib/auth0"
 import { Button } from "@/components/ui/button"
-import { ModeToggle } from "@/components/mode-toggle"
+// Dark mode disabled - ModeToggle removed
 import { OrganizationSwitcher } from "@/components/organization-switcher"
 import { UserNav } from "@/components/user-nav"
 import { MobileNav } from "@/components/mobile-nav"
@@ -158,7 +158,7 @@ export default async function DashboardLayout({
             </div>
 
             <div className="flex items-center gap-x-2">
-              <ModeToggle />
+              {/* Dark mode toggle removed - app is light mode only */}
             </div>
           </div>
         </div>

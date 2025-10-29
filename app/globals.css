@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* Disable dark mode globally - prevents any dark: prefixed classes from working */
+@custom-variant dark (&:not(*));
+
 @theme {
   /* Purple Brand Colors */
   --color-primary: #8B5CF6;
