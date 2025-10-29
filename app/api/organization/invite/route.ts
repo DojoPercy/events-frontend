@@ -85,6 +85,17 @@ export async function POST(request: NextRequest) {
     
     // Handle specific Auth0 errors
     if (error.statusCode === 400) {
+      // Check if it's the "default login route" error
+      if (error.message && error.message.includes('default login route')) {
+        return NextResponse.json(
+          { 
+            error: 'Auth0 Configuration Required: Please set the "Application Login URI" in Auth0 Dashboard. Go to Applications > Your App > Settings > Application Login URI and set it to: ' + 
+                   (process.env.APP_BASE_URL || 'http://localhost:3000') + '/invitation'
+          },
+          { status: 400 }
+        )
+      }
+      
       return NextResponse.json(
         { error: 'Invalid invitation data. Please check the email address.' },
         { status: 400 }

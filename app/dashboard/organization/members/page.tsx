@@ -17,14 +17,16 @@ export default async function OrganizationMembersPage() {
     redirect("/onboarding/create")
   }
 
+  const orgId = session.user.org_id
+
   // Get organization details
   const { data: org } = await managementClient.organizations.get({
-    id: session.user.org_id,
+    id: orgId,
   })
 
   // Get organization members
   const { data: members } = await managementClient.organizations.getMembers({
-    id: session.user.org_id,
+    id: orgId,
   })
 
   // Get member roles for each user
@@ -32,7 +34,7 @@ export default async function OrganizationMembersPage() {
     members.map(async (member) => {
       try {
         const { data: roles } = await managementClient.organizations.getMemberRoles({
-          id: session.user.org_id,
+          id: orgId,
           user_id: member.user_id,
         })
         return { ...member, roles }
@@ -47,7 +49,7 @@ export default async function OrganizationMembersPage() {
   let pendingInvitations: any[] = []
   try {
     const { data: invitations } = await managementClient.organizations.getInvitations({
-      id: session.user.org_id,
+      id: orgId,
     })
     pendingInvitations = invitations.filter((inv: any) => 
       !inv.expires_at || new Date(inv.expires_at) > new Date()
@@ -71,7 +73,7 @@ export default async function OrganizationMembersPage() {
         </div>
         
         {isAdmin && (
-          <InviteMemberDialog organizationId={session.user.org_id} organizationName={org.display_name || org.name} />
+          <InviteMemberDialog organizationId={orgId} organizationName={org.display_name || org.name} />
         )}
       </div>
 
