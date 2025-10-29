@@ -6,6 +6,9 @@ export const createTicketTypeSchema = z.object({
   description: z.string().optional(),
   price: z.number().min(0, 'Price must be positive'),
   quantity: z.number().int().min(1, 'Quantity must be at least 1'),
+  isActive: z.boolean().optional().default(true),
+  requiresApproval: z.boolean().optional().default(false),
+  customNotes: z.string().optional(),
 })
 
 export const updateTicketTypeSchema = createTicketTypeSchema.partial()

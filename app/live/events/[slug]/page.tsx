@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { CalendarIcon, MapPinIcon, LinkedinIcon, TwitterIcon, InstagramIcon, GlobeIcon, MenuIcon, XIcon } from "lucide-react"
 import { format } from "date-fns"
+import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { toast } from "sonner"
@@ -48,6 +49,7 @@ interface Event {
     sold: number
     isActive: boolean
     requiresApproval?: boolean
+    customNotes?: string
   }>
   organization?: {
     name: string
@@ -67,6 +69,7 @@ export default function EventDetailPage({ params }: { params: Promise<{ slug: st
   const [loading, setLoading] = useState(true)
   const [countdown, setCountdown] = useState<Countdown>({ days: 0, hours: 0, minutes: 0, seconds: 0 })
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [expandedTickets, setExpandedTickets] = useState<Record<string, boolean>>({})
 
   useEffect(() => {
     const fetchEvent = async () => {
@@ -130,6 +133,7 @@ export default function EventDetailPage({ params }: { params: Promise<{ slug: st
 
   const primaryColor = event?.primaryColor || "#D4A574"
   const secondaryColor = event?.secondaryColor || "#ffffff"
+  const currency = event?.currency || "AED"
 
   if (loading) {
     return (
@@ -377,74 +381,199 @@ export default function EventDetailPage({ params }: { params: Promise<{ slug: st
       </section>
 
       {/* Tickets Section */}
-      <section id="tickets" className="py-12 sm:py-20 bg-gray-50">
-        <div className="container mx-auto px-4 sm:px-6 max-w-4xl">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 sm:mb-12 text-center" style={{ color: primaryColor }}>
+      <section id="tickets" className="py-12 sm:py-20 bg-gradient-to-b from-gray-50 to-white">
+        <div className="container mx-auto px-4 sm:px-6 max-w-7xl">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-8 sm:mb-12 text-center" style={{ color: primaryColor }}>
             Ticket Options
           </h2>
 
           {event.ticketTypes.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-              {event.ticketTypes.filter(t => t.isActive).map((ticket) => {
-                const available = ticket.quantity - ticket.sold
-                const isSoldOut = available <= 0
+            <>
+              {/* Desktop: 3 columns grid */}
+              <div className="hidden lg:grid lg:grid-cols-3 gap-6 mb-8">
+                {event.ticketTypes.filter(t => t.isActive).map((ticket) => {
+                  const available = ticket.quantity - ticket.sold
+                  const isSoldOut = available <= 0
+                  const showMore = expandedTickets[ticket.id] || false
 
-                return (
-                  <div
-                    key={ticket.id}
-                    className="bg-white rounded-lg shadow-md p-4 sm:p-6 hover:shadow-lg transition-shadow"
-                  >
-                    <div className="flex justify-between items-start mb-3 sm:mb-4">
-                      <div>
-                        <h3 className="text-lg sm:text-xl font-semibold">{ticket.name}</h3>
-                        {ticket.description && (
-                          <p className="text-xs sm:text-sm text-gray-600 mt-1">{ticket.description}</p>
+                  return (
+                    <div
+                      key={ticket.id}
+                      className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col"
+                    >
+                      {/* Header with decorative tickets */}
+                      <div className="relative px-6 py-16 overflow-hidden" style={{ backgroundColor: primaryColor }}>
+                        {/* Decorative ticket outline */}
+                        <div className="absolute right-2 top-1/2 -translate-y-1/2 opacity-20">
+                          <svg width="40" height="24" viewBox="0 0 40 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="1" y="1" width="38" height="22" rx="2" stroke="white" strokeWidth="1.5" strokeDasharray="3 2" />
+                            <circle cx="5" cy="12" r="2" stroke="white" strokeWidth="1" fill="none" />
+                            <circle cx="35" cy="12" r="2" stroke="white" strokeWidth="1" fill="none" />
+                          </svg>
+                        </div>
+                        <h3 className="text-lg font-bold text-white pr-12 line-clamp-2">{ticket.name}</h3>
+                      </div>
+
+                      {/* Price Section */}
+                      <div className="px-6 py-5 bg-white">
+                        <div className="text-3xl font-bold text-gray-900">
+                          {currency || 'AED'} {Number(ticket.price).toFixed(2)}
+                        </div>
+                        <p className="text-sm text-gray-500 mt-2">
+                          Sales end on {format(new Date(event.eventDate), "MMM dd, yyyy")}
+                        </p>
+                      </div>
+
+                      {/* CTA Button */}
+                      <div className="px-6 pb-4">
+                        <Button
+                          className="w-full text-white font-semibold py-6 rounded-lg transition-all"
+                          style={{ backgroundColor: primaryColor }}
+                          onClick={() => router.push(`/live/events/${event.slug}/tickets`)}
+                          disabled={isSoldOut}
+                        >
+                          {isSoldOut ? 'SOLD OUT' : 'BOOK NOW'}
+                        </Button>
+                        {ticket.requiresApproval && (
+                          <p className="text-xs text-red-600 mt-2 flex items-center justify-center gap-1">
+                            <span className="text-red-600">*</span> Approval Required
+                          </p>
                         )}
                       </div>
-                      {isSoldOut && (
-                        <Badge variant="destructive" className="text-xs">Sold Out</Badge>
-                      )}
-                    </div>
 
-                    <div className="flex justify-between items-end">
-                      <div>
-                        <p className="text-2xl sm:text-3xl font-bold" style={{ color: primaryColor }}>
-                          ${Number(ticket.price).toFixed(2)}
-                        </p>
-                        <p className="text-xs sm:text-sm text-gray-500 mt-1">
-                          {available} / {ticket.quantity} available
-                        </p>
+                      {/* Details Section */}
+                      <div className="px-6 pb-6 flex-1">
+                        <h4 className="font-bold text-gray-900 mb-2">More Details</h4>
+                        {ticket.description && (
+                          <p className={cn(
+                            "text-sm text-gray-600 leading-relaxed",
+                            !showMore && "line-clamp-3"
+                          )}>
+                            {ticket.description}
+                          </p>
+                        )}
+                        {ticket.customNotes && (
+                          <p className={cn(
+                            "text-xs text-gray-500 mt-2 italic",
+                            !showMore && "line-clamp-2"
+                          )}>
+                            {ticket.customNotes}
+                          </p>
+                        )}
+                        <p className="text-xs text-gray-500 mt-2">Subject to 5% VAT.</p>
+                        {(ticket.description || ticket.customNotes) && (
+                          <button
+                            onClick={() => setExpandedTickets(prev => ({ ...prev, [ticket.id]: !showMore }))}
+                            className="text-xs mt-2 hover:underline"
+                            style={{ color: primaryColor }}
+                          >
+                            {showMore ? '... Show less' : '... Show more'}
+                          </button>
+                        )}
+                        <div className="mt-4 pt-4 border-t text-xs text-gray-500">
+                          {available} / {ticket.quantity} tickets available
+                        </div>
                       </div>
                     </div>
+                  )
+                })}
+              </div>
 
-                    {ticket.requiresApproval && (
-                      <p className="text-xs text-amber-600 mt-3 sm:mt-4">
-                        * Requires approval
-                      </p>
-                    )}
-                  </div>
-                )
-              })}
-            </div>
+              {/* Mobile & Tablet: Horizontal scroll */}
+              <div className="lg:hidden overflow-x-auto pb-4 -mx-4 px-4 snap-x snap-mandatory">
+                <div className="flex gap-4 min-w-min">
+                  {event.ticketTypes.filter(t => t.isActive).map((ticket) => {
+                    const available = ticket.quantity - ticket.sold
+                    const isSoldOut = available <= 0
+                    const showMore = expandedTickets[ticket.id] || false
+
+                    return (
+                      <div
+                        key={ticket.id}
+                        className="bg-white rounded-2xl shadow-lg overflow-hidden w-[320px] sm:w-[400px] flex-shrink-0 snap-center flex flex-col"
+                      >
+                        {/* Header */}
+                        <div className="relative px-6 py-4 overflow-hidden" style={{ backgroundColor: primaryColor }}>
+                          <div className="absolute right-2 top-1/2 -translate-y-1/2 opacity-20">
+                            <svg width="40" height="24" viewBox="0 0 40 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <rect x="1" y="1" width="38" height="22" rx="2" stroke="white" strokeWidth="1.5" strokeDasharray="3 2" />
+                              <circle cx="5" cy="12" r="2" stroke="white" strokeWidth="1" fill="none" />
+                              <circle cx="35" cy="12" r="2" stroke="white" strokeWidth="1" fill="none" />
+                            </svg>
+                          </div>
+                          <h3 className="text-lg font-bold text-white pr-12">{ticket.name}</h3>
+                        </div>
+
+                        {/* Price */}
+                        <div className="px-6 py-5">
+                          <div className="text-3xl font-bold text-gray-900">
+                            {currency || 'AED'} {Number(ticket.price).toFixed(2)}
+                          </div>
+                          <p className="text-sm text-gray-500 mt-2">
+                            Sales end on {format(new Date(event.eventDate), "MMM dd, yyyy")}
+                          </p>
+                        </div>
+
+                        {/* CTA */}
+                        <div className="px-6 pb-4">
+                          <Button
+                            className="w-full text-white font-semibold py-6 rounded-lg"
+                            style={{ backgroundColor: primaryColor }}
+                            onClick={() => router.push(`/live/events/${event.slug}/tickets`)}
+                            disabled={isSoldOut}
+                          >
+                            {isSoldOut ? 'SOLD OUT' : 'BOOK NOW'}
+                          </Button>
+                          {ticket.requiresApproval && (
+                            <p className="text-xs text-red-600 mt-2 flex items-center justify-center gap-1">
+                              <span>*</span> Approval Required
+                            </p>
+                          )}
+                        </div>
+
+                        {/* Details */}
+                        <div className="px-6 pb-6 flex-1">
+                          <h4 className="font-bold text-gray-900 mb-2">More Details</h4>
+                          {ticket.description && (
+                            <p className={cn("text-sm text-gray-600", !showMore && "line-clamp-3")}>
+                              {ticket.description}
+                            </p>
+                          )}
+                          {ticket.customNotes && (
+                            <p className={cn("text-xs text-gray-500 mt-2 italic", !showMore && "line-clamp-2")}>
+                              {ticket.customNotes}
+                            </p>
+                          )}
+                          <p className="text-xs text-gray-500 mt-2">Subject to 5% VAT.</p>
+                          {(ticket.description || ticket.customNotes) && (
+                            <button
+                              onClick={() => setExpandedTickets(prev => ({ ...prev, [ticket.id]: !showMore }))}
+                              className="text-xs mt-2 hover:underline"
+                              style={{ color: primaryColor }}
+                            >
+                              {showMore ? '... Show less' : '... Show more'}
+                            </button>
+                          )}
+                          <div className="mt-4 pt-4 border-t text-xs text-gray-500">
+                            {available} / {ticket.quantity} available
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+
+              {/* Scroll indicator for mobile */}
+              <div className="lg:hidden text-center mt-4 text-sm text-gray-500">
+                ← Swipe to see more options →
+              </div>
+            </>
           ) : (
-            <div className="text-center py-8 sm:py-12">
+            <div className="text-center py-12">
               <p className="text-gray-500">Ticket information coming soon</p>
             </div>
           )}
-
-          <div className="mt-8 sm:mt-12 text-center">
-            <Button 
-              size="lg"
-              className="w-full sm:w-auto text-base sm:text-lg px-6 sm:px-12 py-4 sm:py-6"
-              style={{ 
-                backgroundColor: primaryColor,
-                color: secondaryColor 
-              }}
-              onClick={() => router.push(`/live/events/${event.slug}/tickets`)}
-            >
-              Continue to Registration
-            </Button>
-          </div>
         </div>
       </section>
 

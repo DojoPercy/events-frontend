@@ -1,72 +1,54 @@
 @import "tailwindcss";
 
-@layer base {
-  :root {
-    /* Purple Brand Colors */
-    --primary: 262 83% 58%;        /* #8B5CF6 - Purple 500 */
-    --primary-foreground: 0 0% 100%;
-    
-    --secondary: 270 67% 65%;       /* #A855F7 - Purple 400 */
-    --secondary-foreground: 0 0% 100%;
-    
-    --accent: 280 80% 70%;          /* Lighter purple for hover states */
-    --accent-foreground: 262 83% 20%;
-    
-    /* Neutral Colors */
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
-    
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
-    
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
-    
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
-    
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 262 83% 58%;
-    
-    /* Semantic Colors */
-    --success: 142 76% 36%;
-    --warning: 38 92% 50%;
-    --destructive: 0 84% 60%;
-    
-    /* Radius */
-    --radius: 0.75rem;
-  }
-
-  .dark {
-    --primary: 262 83% 58%;
-    --primary-foreground: 0 0% 100%;
-    
-    --secondary: 270 67% 65%;
-    --secondary-foreground: 0 0% 100%;
-    
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
-    
-    --card: 240 10% 7%;
-    --card-foreground: 0 0% 98%;
-    
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
-    
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-  }
+@theme {
+  /* Purple Brand Colors */
+  --color-primary: #8B5CF6;
+  --color-primary-foreground: #ffffff;
+  
+  --color-secondary: #A855F7;
+  --color-secondary-foreground: #ffffff;
+  
+  --color-accent: #C084FC;
+  --color-accent-foreground: #3B0764;
+  
+  /* Neutral Colors */
+  --color-background: #ffffff;
+  --color-foreground: #0f172a;
+  
+  --color-card: #ffffff;
+  --color-card-foreground: #0f172a;
+  
+  --color-muted: #f1f5f9;
+  --color-muted-foreground: #64748b;
+  
+  --color-popover: #ffffff;
+  --color-popover-foreground: #0f172a;
+  
+  --color-border: #e2e8f0;
+  --color-input: #e2e8f0;
+  --color-ring: #8B5CF6;
+  
+  /* Semantic Colors */
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-destructive: #ef4444;
+  --color-destructive-foreground: #ffffff;
+  
+  /* Radius */
+  --radius-sm: 0.375rem;
+  --radius: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
 }
 
 @layer base {
   * {
-    border-color: hsl(var(--border));
+    @apply border-border;
   }
   
   body {
-    background-color: hsl(var(--background));
-    color: hsl(var(--foreground));
+    @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
   
@@ -82,16 +64,15 @@
   }
   
   ::-webkit-scrollbar-track {
-    background-color: hsl(var(--muted));
+    @apply bg-muted;
   }
   
   ::-webkit-scrollbar-thumb {
-    background-color: hsl(var(--muted-foreground) / 0.3);
-    border-radius: 9999px;
+    @apply bg-muted-foreground/30 rounded-full;
   }
   
   ::-webkit-scrollbar-thumb:hover {
-    background-color: hsl(var(--primary) / 0.5);
+    @apply bg-primary/50;
   }
 }
 

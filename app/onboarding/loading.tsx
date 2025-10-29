@@ -1,7 +1,5 @@
+import { LoadingScreen } from "@/components/loading-spinner"
+
 export default function OnboardingLoading() {
-  return (
-    <div className="min-h-screen grid place-items-center">
-      <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary" />
-    </div>
-  )
+  return <LoadingScreen />
 }

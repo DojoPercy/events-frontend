@@ -76,6 +76,7 @@ interface TicketType {
   sold: number
   isActive: boolean
   requiresApproval?: boolean
+  customNotes?: string
 }
 
 interface TicketFormData {
@@ -85,6 +86,7 @@ interface TicketFormData {
   quantity: number
   isActive: boolean
   requiresApproval: boolean
+  customNotes: string
 }
 
 export default function EditEventPage() {
@@ -101,7 +103,8 @@ export default function EditEventPage() {
     price: 0,
     quantity: 100,
     isActive: true,
-    requiresApproval: false
+    requiresApproval: false,
+    customNotes: ''
   })
 
   const {
@@ -204,7 +207,8 @@ export default function EditEventPage() {
       price: 0,
       quantity: 100,
       isActive: true,
-      requiresApproval: false
+      requiresApproval: false,
+      customNotes: ''
     })
     setShowTicketDialog(true)
   }
@@ -217,7 +221,8 @@ export default function EditEventPage() {
       price: Number(ticket.price),
       quantity: ticket.quantity,
       isActive: ticket.isActive,
-      requiresApproval: ticket.requiresApproval || false
+      requiresApproval: ticket.requiresApproval || false,
+      customNotes: ticket.customNotes || ''
     })
     setShowTicketDialog(true)
   }
@@ -787,7 +792,7 @@ export default function EditEventPage() {
 
       {/* Ticket Dialog */}
       <Dialog open={showTicketDialog} onOpenChange={setShowTicketDialog}>
-        <DialogContent className="max-w-md sm:max-w-lg max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-md sm:max-w-lg max-h-[90vh] overflow-y-auto bg-white">
           <DialogHeader>
             <DialogTitle className="text-lg sm:text-xl">
               {editingTicket ? 'Edit Ticket Type' : 'Add Ticket Type'}
@@ -869,6 +874,25 @@ export default function EditEventPage() {
                 onCheckedChange={(checked) => setTicketFormData({ ...ticketFormData, requiresApproval: checked })}
               />
             </div>
+
+            {ticketFormData.requiresApproval && (
+              <div className="space-y-2 pt-2">
+                <Label htmlFor="customNotes" className="text-sm sm:text-base">
+                  Custom Notes <span className="text-muted-foreground">(Optional)</span>
+                </Label>
+                <Textarea
+                  id="customNotes"
+                  value={ticketFormData.customNotes}
+                  onChange={(e) => setTicketFormData({ ...ticketFormData, customNotes: e.target.value })}
+                  placeholder="Additional notes or requirements for this ticket type"
+                  rows={3}
+                  className="text-sm sm:text-base resize-none"
+                />
+                <p className="text-xs text-muted-foreground">
+                  These notes will be displayed to customers when selecting this ticket
+                </p>
+              </div>
+            )}
           </div>
 
           <DialogFooter className="flex-col sm:flex-row gap-2">

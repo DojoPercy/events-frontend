@@ -6,8 +6,10 @@ import { motion } from "framer-motion"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { useUser } from "@auth0/nextjs-auth0"
 
 export default function LandingPage() {
+  const session = useUser()
   return (
     <div className="min-h-screen">
       {/* Header */}
@@ -29,9 +31,9 @@ export default function LandingPage() {
               Contact
             </Link>
             <Button variant="gradient" size="default" className="text-xs sm:text-sm px-3 sm:px-4 h-8 sm:h-10" asChild>
-              <Link href="/login">
-                <span className="hidden sm:inline">Get Started</span>
-                <span className="sm:hidden">Start</span>
+              <Link href={session ? "/dashboard" : "/login"}>
+                <span className="hidden sm:inline">{session ? "Dashboard" : "Get Started"}</span>
+                <span className="sm:hidden">{session ? "Dashboard" : "Get Started"}</span>
                 <ArrowRightIcon className="ml-1 sm:ml-2 h-3 w-3 sm:h-4 sm:w-4" />
               </Link>
             </Button>
@@ -152,10 +154,9 @@ export default function LandingPage() {
               Join thousands of organizations already using EventApp to manage their events.
             </p>
             <div className="mt-6 sm:mt-8 flex items-center justify-center gap-x-4 sm:gap-x-6">
-              <Button size="lg" className="bg-white text-primary hover:bg-white/90 w-full sm:w-auto" asChild>
+              <Button size="lg" className="bg-white text-black hover:bg-white/90 w-full sm:w-auto" asChild>
                 <Link href="/login">
-                  <span className="hidden sm:inline">Create Your First Event</span>
-                  <span className="sm:hidden">Get Started</span>
+                  Create Your First Event
                   <ArrowRightIcon className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
                 </Link>
               </Button>
@@ -206,7 +207,7 @@ export default function LandingPage() {
             </div>
           </div>
           <div className="mt-8 border-t pt-8 text-center text-sm text-muted-foreground">
-            <p>&copy; 2024 EventApp. All rights reserved.</p>
+            <p>&copy; 2025 EventApp. All rights reserved.</p>
           </div>
         </div>
       </footer>
