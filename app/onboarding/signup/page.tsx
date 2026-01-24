@@ -1,17 +1,17 @@
-import Link from "next/link"
-import { redirect } from "next/navigation"
-import { Auth0Provider } from "@auth0/nextjs-auth0"
-import { SparklesIcon } from "lucide-react"
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { Auth0Provider } from "@auth0/nextjs-auth0";
+import { SparklesIcon } from "lucide-react";
 
-import { managementClient, onboardingClient } from "@/lib/auth0"
-import { SignUpForm } from "./signup-form"
+import { managementClient, onboardingClient } from "@/lib/auth0";
+import { SignUpForm } from "./signup-form";
 
 export default async function SignUp() {
-  const session = await onboardingClient.getSession()
+  const session = await onboardingClient.getSession();
 
   // If user already has a session (logged in), redirect to create org
   if (session) {
-    redirect("/onboarding/create")
+    redirect("/onboarding/create");
   }
 
   return (
@@ -27,7 +27,8 @@ export default async function SignUp() {
         <div className="relative z-20 mt-auto">
           <blockquote className="space-y-3 sm:space-y-4">
             <p className="text-lg sm:text-xl leading-relaxed">
-              &ldquo;Create and manage your events with ease. Professional event management and ticketing platform for organizations.&rdquo;
+              &ldquo;Create and manage your events with ease. Professional event
+              management and ticketing platform for organizations.&rdquo;
             </p>
             <footer className="text-sm text-white/80">EventApp Team</footer>
           </blockquote>
@@ -44,17 +45,8 @@ export default async function SignUp() {
             </p>
           </div>
           <SignUpForm />
-          <p className="px-4 sm:px-8 text-center text-sm text-muted-foreground">
-            Already have an account?{" "}
-            <Link
-              href="/auth/login"
-              className="underline underline-offset-4 hover:text-primary font-medium"
-            >
-              Sign in
-            </Link>
-          </p>
         </div>
       </div>
     </div>
-  )
+  );
 }

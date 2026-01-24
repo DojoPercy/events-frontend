@@ -10,7 +10,6 @@ export async function GET(request: NextRequest) {
     
     console.log('[GET /api/events] Session:', {
       hasUser: !!session?.user,
-      email: session?.user?.email,
       orgId: session?.user?.org_id
     })
     
@@ -102,8 +101,21 @@ export async function POST(request: NextRequest) {
       console.log(`[CREATE EVENT] Created organization in DB: ${orgName}`)
     }
 
-    // Create event with slug (avoid passing ticketTypes inadvertently)
-    const slug = validatedData.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-*|-*$/g, '')
+    // Generate unique slug
+    let baseSlug = validatedData.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-*|-*$/g, '')
+    let slug = baseSlug
+    let counter = 1
+    
+    while (true) {
+      const existingEvent = await prisma.event.findUnique({
+        where: { slug }
+      })
+      
+      if (!existingEvent) break
+      
+      slug = `${baseSlug}-${counter}`
+      counter++
+    }
 
     const event = await prisma.event.create({
       data: {
