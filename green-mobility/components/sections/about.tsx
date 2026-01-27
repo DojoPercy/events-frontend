@@ -20,154 +20,223 @@ export function About() {
   ];
 
   return (
-    <section id="about" className="py-24 bg-gray-50">
-      <div className="container px-4">
-        {/* 1. Primary Description (Text Heavy) */}
-        <div className="flex flex-col lg:flex-row gap-12 items-start mb-16">
+    <section id="about" className="py-24 bg-white relative overflow-hidden">
+      {/* Subtle Background Pattern */}
+      <div className="absolute top-0 left-0 w-full h-full opacity-[0.03] pointer-events-none">
+        <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern
+              id="grid"
+              width="40"
+              height="40"
+              patternUnits="userSpaceOnUse"
+            >
+              <path
+                d="M 40 0 L 0 0 0 40"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1"
+              />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#grid)" />
+        </svg>
+      </div>
+
+      <div className="container px-4 relative z-10">
+        {/* 1. Header Section */}
+        <div className="max-w-3xl mx-auto text-center mb-20">
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-green-50 border border-green-100 text-green-700 text-xs font-bold uppercase tracking-widest mb-6"
+          >
+            <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+            About The Event
+          </motion.div>
+
+          <motion.h2
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+            className="text-4xl md:text-5xl font-bold font-heading text-gray-900 mb-6 leading-tight"
+          >
+            Driving the Future of <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-700 to-green-500">
+              Sustainable Mobility
+            </span>
+          </motion.h2>
+
+          <motion.p
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+            className="text-lg text-gray-500 leading-relaxed"
+          >
+            The{" "}
+            <span className="font-semibold text-gray-900">
+              Green Mobility & Sustainable Transport Awards Africa 2026
+            </span>{" "}
+            is the continent's premier gathering for policymakers, innovators,
+            and industry leaders dedicated to shaping a cleaner, more connected
+            Africa.
+          </motion.p>
+        </div>
+
+        <div className="grid lg:grid-cols-12 gap-8 items-stretch">
+          {/* 2. Main Content Card */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="lg:w-2/3"
+            className="lg:col-span-7 bg-white rounded-3xl p-8 md:p-10 border border-gray-100 shadow-xl shadow-gray-100/50 flex flex-col justify-between"
           >
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-100/50 border border-green-200 text-green-700 text-sm font-semibold uppercase tracking-wider mb-6">
-              <Sparkles className="w-4 h-4" />
-              About The Event
+            <div>
+              <h3 className="text-2xl font-bold font-heading text-gray-900 mb-6 flex items-center gap-3">
+                <Target className="w-6 h-6 text-green-600" />
+                Core Objectives
+              </h3>
+              <div className="space-y-6">
+                {[
+                  {
+                    title: "Celebrate Innovation",
+                    desc: "Recognizing bold initiatives in low-carbon transport and infrastructure.",
+                  },
+                  {
+                    title: "Accelerate Investment",
+                    desc: "Bridging the gap between sustainable projects and green financing.",
+                  },
+                  {
+                    title: "Policy Dialogue",
+                    desc: "Facilitating high-level discussions to harmonize regulatory frameworks.",
+                  },
+                ].map((item, i) => (
+                  <div key={i} className="flex gap-4 group">
+                    <div className="mt-1 w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center flex-shrink-0 group-hover:bg-green-100 transition-colors">
+                      <span className="text-green-700 font-bold font-heading">
+                        {i + 1}
+                      </span>
+                    </div>
+                    <div>
+                      <h4 className="text-gray-900 font-bold mb-1">
+                        {item.title}
+                      </h4>
+                      <p className="text-gray-500 text-sm leading-relaxed">
+                        {item.desc}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
-            <h2 className="text-4xl md:text-5xl font-bold font-heading text-gray-900 mb-6 leading-tight">
-              A Landmark Continental Platform for{" "}
-              <span className="text-green-600">Sustainable Mobility</span>
-            </h2>
-            <div className="prose prose-lg text-gray-600 leading-relaxed space-y-4">
-              <p>
-                The{" "}
-                <span className="font-semibold text-gray-900">
-                  Green Mobility & Sustainable Transport Awards Africa 2026
-                </span>{" "}
-                is dedicated to recognizing leadership, innovation, and impact
-                in advancing clean transport systems and climate-resilient
-                infrastructure across Africa.
-              </p>
-              <p>
-                Held alongside the{" "}
-                <span className="font-semibold text-gray-900">
-                  Africa Governments Summit & Public Sector Innovation Awards
-                  2026
+
+            <div className="mt-10 pt-8 border-t border-gray-100">
+              <div className="flex items-center gap-4 text-sm text-gray-500">
+                <span className="font-semibold text-green-700">
+                  Held alongside:
                 </span>
-                , this high-level gathering serves as a catalyst for policy
-                dialogue, innovation showcasing, and continental recognition.
-              </p>
-            </div>
-          </motion.div>
-
-          {/* 2. Key Context Card (Right Side) */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
-            className="lg:w-1/3 bg-white p-8 rounded-3xl border border-gray-100 shadow-xl"
-          >
-            <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
-              <Target className="w-5 h-5 text-green-600" />
-              Core Objectives
-            </h3>
-            <ul className="space-y-4">
-              {[
-                "Celebrate bold initiatives in low-carbon transport.",
-                "Accelerate investment in sustainable infrastructure.",
-                "Facilitate high-level policy dialogue.",
-                "Showcase future-ready mobility solutions.",
-              ].map((item, i) => (
-                <li
-                  key={i}
-                  className="flex items-start gap-3 text-sm text-gray-600"
-                >
-                  <div className="w-1.5 h-1.5 rounded-full bg-green-400 mt-1.5 flex-shrink-0" />
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </motion.div>
-        </div>
-
-        {/* 3. The Grid (Visuals + "Who Should Attend") */}
-        <div className="grid md:grid-cols-4 gap-6">
-          {/* Visual Card */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="md:col-span-2 bg-gray-900 rounded-3xl overflow-hidden relative group h-[300px]"
-          >
-            <img
-              src="/mar.png"
-              alt="Conference Interior"
-              className="w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity duration-700"
-            />
-            <div className="absolute bottom-6 left-6 right-6">
-              <div className="text-white">
-                <p className="text-xs font-bold uppercase tracking-wider mb-1 text-green-400">
-                  The Experience
-                </p>
-                <h3 className="text-xl font-bold">
-                  Innovation & Solutions Showcase
-                </h3>
-                <p className="text-sm text-gray-300 mt-2 line-clamp-2">
-                  A curated presentation of cutting-edge technologies supporting
-                  clean mobility and logistics.
-                </p>
+                Africa Governments Summit & Public Sector Innovation Awards 2026
               </div>
             </div>
           </motion.div>
 
-          {/* Who Should Attend Card */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
-            className="md:col-span-1 bg-green-600 text-white p-6 rounded-3xl flex flex-col justify-between"
-          >
-            <div>
-              <Users className="w-8 h-8 mb-4 text-green-200" />
-              <h3 className="font-bold text-lg mb-4">Who Should Attend?</h3>
-              <ul className="space-y-2">
-                {whoShouldAttend.slice(0, 3).map((role, i) => (
-                  <li
-                    key={i}
-                    className="text-xs font-medium text-green-50 border-b border-green-500/30 pb-2 last:border-0"
-                  >
-                    {role}
-                  </li>
-                ))}
-                <li className="text-xs font-medium text-green-200 pt-1 italic">
-                  + CEOs, Investors & Planners
-                </li>
-              </ul>
-            </div>
-          </motion.div>
+          {/* 3. Side Cards Column */}
+          <div className="lg:col-span-5 space-y-8 flex flex-col">
+            {/* Who Should Attend */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="bg-gray-900 text-white rounded-3xl p-8 relative overflow-hidden flex-1"
+            >
+              {/* Abstract Decoration */}
+              <div className="absolute top-0 right-0 w-32 h-32 bg-green-500/10 rounded-full blur-3xl -mr-10 -mt-10" />
 
-          {/* Stat Card */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
-            className="md:col-span-1 bg-white border border-gray-100 p-6 rounded-3xl flex flex-col justify-center items-center text-center shadow-sm hover:shadow-md transition-shadow"
-          >
-            <div className="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center mb-3">
-              <MessageSquare className="w-6 h-6 text-gray-900" />
-            </div>
-            <h3 className="text-3xl font-bold text-gray-900 mb-1">1 Day</h3>
-            <p className="text-sm text-gray-500 font-medium">
-              High-Impact Forum
-            </p>
-            <div className="mt-4 text-xs text-gray-400 px-3 py-1 bg-gray-50 rounded-lg">
-              Panel Discussions • Awards • Networking
-            </div>
-          </motion.div>
+              <div className="relative z-10">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="p-2 bg-white/10 rounded-lg backdrop-blur-sm">
+                    <Users className="w-5 h-5 text-green-400" />
+                  </div>
+                  <h3 className="text-xl font-bold font-heading">
+                    Who Attends?
+                  </h3>
+                </div>
+
+                <ul className="grid grid-cols-1 gap-3">
+                  {whoShouldAttend.map((role, i) => (
+                    <li
+                      key={i}
+                      className="flex items-center gap-3 text-sm text-gray-300 font-medium"
+                    >
+                      <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
+                      {role}
+                    </li>
+                  ))}
+                </ul>
+                <div className="mt-6 pt-6 border-t border-white/10 text-xs text-gray-400">
+                  + 500 Industry Leaders & Visionaries
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Stat/Visual Box */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+              className="bg-green-50 rounded-3xl p-8 border border-green-100 flex items-center justify-between relative overflow-hidden group"
+            >
+              <div className="relative z-10">
+                <p className="text-green-800 font-semibold mb-1">
+                  Event Duration
+                </p>
+                <h3 className="text-4xl font-bold text-gray-900 font-heading">
+                  1 <span className="text-green-600">Day</span>
+                </h3>
+                <p className="text-sm text-green-700/70 mt-2">
+                  Full of Insights & Impact
+                </p>
+              </div>
+              <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm z-10">
+                <MessageSquare className="w-7 h-7 text-green-600" />
+              </div>
+
+              {/* Hover Effect */}
+              <div className="absolute right-0 bottom-0 w-24 h-24 bg-green-200/20 rounded-full blur-xl group-hover:scale-150 transition-transform duration-500" />
+            </motion.div>
+          </div>
         </div>
+
+        {/* 4. Bottom Image Strip */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.2 }}
+          className="mt-8 relative h-48 md:h-64 rounded-3xl overflow-hidden group"
+        >
+          <img
+            src="/mar.png"
+            alt="Conference Experience"
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 via-transparent to-transparent" />
+          <div className="absolute bottom-6 left-6 md:left-10 text-white">
+            <div className="flex items-center gap-2 mb-2">
+              <Sparkles className="w-4 h-4 text-green-400" />
+              <span className="text-xs font-bold uppercase tracking-widest text-green-200">
+                The Experience
+              </span>
+            </div>
+            <h3 className="text-2xl font-bold font-heading">
+              Innovation & Solutions Showcase
+            </h3>
+          </div>
+        </motion.div>
       </div>
     </section>
   );
